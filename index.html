@@ -1,23 +1,11 @@
-   
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>Subida de trabajos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"></script>
-  <script>
-    let fondo;
-    function preload() {
-      fondo = loadImage('fondo.png');
-    }
-    function setup() {
-      createCanvas(windowWidth, windowHeight);
-    }
-    function draw() {
-      background(fondo);
-    }
-  </script>
+  <script src="sketch.js"></script>
   <style>
     body, html {
       margin: 0;
@@ -39,6 +27,7 @@
       width: 90%;
       max-width: 500px;
       text-align: center;
+      z-index: 10;
     }
 
     #uploadForm input[type="file"],
@@ -68,6 +57,7 @@
       font-size: 22px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       text-align: center;
+      z-index: 10;
     }
 
     #githubLink a {
@@ -129,12 +119,7 @@
       .then(data => {
         document.body.innerHTML = `
           <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"><\/script>
-          <script>
-            let fondo;
-            function preload() { fondo = loadImage('fondo.png'); }
-            function setup() { createCanvas(windowWidth, windowHeight); }
-            function draw() { background(fondo); }
-          <\/script>
+          <script src="sketch.js"><\/script>
           <div style="
             position: absolute;
             top: 50%;
@@ -166,7 +151,6 @@
                 background: rgba(30,30,30,0.95) !important;
                 color: white !important;
               }
-
               button {
                 background-color: #66bb6a !important;
               }
@@ -182,5 +166,6 @@
   </script>
 </body>
 </html>
+
 
    
