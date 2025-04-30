@@ -1,4 +1,3 @@
-// /var/www/html/p5upload/sketch.js
 let fondo;
 
 function preload() {
@@ -6,10 +5,16 @@ function preload() {
 }
 
 function setup() {
+  pixelDensity(1); 
   createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-  background(fondo);
+
+  background(0); 
+  image(fondo, 0, 0, width, height); 
 }
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
