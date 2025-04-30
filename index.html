@@ -1,126 +1,186 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Subida de trabajos</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"></script>
-    <script src="sketch.js"></script>
-    <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        font-family: sans-serif;
-      }
+   
+  <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Subida de trabajos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"></script>
+  <script>
+    let fondo;
+    function preload() {
+      fondo = loadImage('fondo.png');
+    }
+    function setup() {
+      createCanvas(windowWidth, windowHeight);
+    }
+    function draw() {
+      background(fondo);
+    }
+  </script>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
 
-      #uploadForm {
-        position: absolute;
-        bottom: 200px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.95);
-        padding: 25px;
-        border-radius: 15px;
-        font-size: 20px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        width: 90%;
-        max-width: 500px;
-      }
+    #uploadForm {
+      position: absolute;
+      bottom: 160px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px 25px;
+      border-radius: 15px;
+      font-size: 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
 
-      #uploadForm label {
-        display: block;
-        margin-bottom: 16px;
-        font-weight: bold;
-      }
+    #uploadForm input[type="file"],
+    #uploadForm input[type="submit"] {
+      margin-top: 15px;
+      font-size: 20px;
+      padding: 10px;
+      width: 100%;
+      border-radius: 10px;
+      border: none;
+    }
 
-      #uploadForm input[type="file"],
-      #uploadForm input[type="submit"] {
-        width: 100%;
-        font-size: 18px;
-        padding: 12px;
-        margin-top: 12px;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        box-sizing: border-box;
-      }
+    #uploadForm input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
 
+    #githubLink {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      text-align: center;
+    }
+
+    #githubLink a {
+      color: #0000ee;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #githubLink a:hover {
+      text-decoration: underline;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #uploadForm,
       #githubLink {
-        position: absolute;
-        bottom: 100px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(255, 255, 255, 0.95);
-        padding: 16px 22px;
-        border-radius: 12px;
-        font-size: 20px;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        background: rgba(30, 30, 30, 0.9);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(255,255,255,0.1);
       }
 
       #githubLink a {
-        color: #0000ee;
-        text-decoration: none;
-        font-weight: bold;
+        color: #66ccff;
       }
 
-      #githubLink a:hover {
-        text-decoration: underline;
+      #uploadForm input[type="submit"] {
+        background-color: #66bb6a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label><br>
+    <input type="file" name="file" id="fileInput"><br>
+    <input type="submit" value="Subir">
+  </form>
+
+  <div id="githubLink">
+    <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) {
+        alert("Por favor selecciona un archivo.");
+        return;
       }
 
-      @media (max-width: 600px) {
-        #uploadForm {
-          font-size: 18px;
-          padding: 20px;
-          bottom: 180px;
-        }
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
 
-        #uploadForm input[type="file"],
-        #uploadForm input[type="submit"] {
-          font-size: 17px;
-          padding: 10px;
-        }
+      fetch('https://miweb-mj38.onrender.com/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        document.body.innerHTML = `
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"><\/script>
+          <script>
+            let fondo;
+            function preload() { fondo = loadImage('fondo.png'); }
+            function setup() { createCanvas(windowWidth, windowHeight); }
+            function draw() { background(fondo); }
+          <\/script>
+          <div style="
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 30px 40px;
+            border-radius: 20px;
+            font-size: 28px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-width: 90%;
+          ">
+            ✅ Archivo subido exitosamente<br><br>
+            <button onclick='location.reload()' style="
+              margin-top: 20px;
+              font-size: 24px;
+              padding: 15px 30px;
+              border: none;
+              border-radius: 12px;
+              background-color: #4CAF50;
+              color: white;
+              font-weight: bold;
+            ">Volver al menú principal</button>
+          </div>
+          <style>
+            @media (prefers-color-scheme: dark) {
+              div {
+                background: rgba(30,30,30,0.95) !important;
+                color: white !important;
+              }
 
-        #githubLink {
-          font-size: 18px;
-          padding: 14px 18px;
-          bottom: 90px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <form id="uploadForm" enctype="multipart/form-data">
-      <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label>
-      <input type="file" name="file" id="fileInput">
-      <input type="submit" value="Subir">
-    </form>
-
-    <div id="githubLink">
-      <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
-    </div>
-
-    <script>
-      document.getElementById('uploadForm').addEventListener('submit', function(event) {
-        event.preventDefault();
-        const fileInput = document.getElementById('fileInput');
-        if (!fileInput.files.length) {
-          alert("Por favor selecciona un archivo.");
-          return;
-        }
-        const formData = new FormData();
-        formData.append('file', fileInput.files[0]);
-        fetch('https://miweb-mj38.onrender.com/upload', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.text())
-        .then(data => {
-          document.body.innerHTML = data;
-        })
-        .catch(error => {
-          console.error('Error:', error);
-          alert("Hubo un error al subir el archivo.");
-        });
+              button {
+                background-color: #66bb6a !important;
+              }
+            }
+          <\/style>
+        `;
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("Hubo un error al subir el archivo.");
       });
-    </script>
-  </body>
+    });
+  </script>
+</body>
 </html>
+
+   
