@@ -10,36 +10,48 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+        font-family: sans-serif;
       }
 
       #uploadForm {
         position: absolute;
-        bottom: 100px;
+        bottom: 120px;
         left: 20px;
-        background: rgba(255, 255, 255, 0.85);
-        padding: 15px 20px;
-        border-radius: 10px;
+        right: 20px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 12px;
         font-size: 18px;
-        font-family: sans-serif;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        max-width: 400px;
+        margin: auto;
+      }
+
+      #uploadForm label {
+        display: block;
+        margin-bottom: 12px;
+        font-weight: bold;
       }
 
       #uploadForm input[type="file"],
       #uploadForm input[type="submit"] {
-        margin-top: 10px;
+        width: 100%;
         font-size: 16px;
-        padding: 5px;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        box-sizing: border-box;
       }
 
       #githubLink {
         position: absolute;
         bottom: 20px;
         left: 20px;
-        background: rgba(255, 255, 255, 0.85);
-        padding: 10px 15px;
-        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 12px 18px;
+        border-radius: 10px;
         font-size: 18px;
-        font-family: sans-serif;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       }
 
@@ -52,12 +64,29 @@
       #githubLink a:hover {
         text-decoration: underline;
       }
+
+      @media (max-width: 600px) {
+        #uploadForm {
+          font-size: 16px;
+          padding: 15px;
+        }
+
+        #uploadForm input[type="file"],
+        #uploadForm input[type="submit"] {
+          font-size: 15px;
+        }
+
+        #githubLink {
+          font-size: 16px;
+          padding: 10px 14px;
+        }
+      }
     </style>
   </head>
   <body>
     <form id="uploadForm" enctype="multipart/form-data">
-      <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label><br>
-      <input type="file" name="file" id="fileInput"><br>
+      <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label>
+      <input type="file" name="file" id="fileInput">
       <input type="submit" value="Subir">
     </form>
 
@@ -68,16 +97,13 @@
     <script>
       document.getElementById('uploadForm').addEventListener('submit', function(event) {
         event.preventDefault();
-
         const fileInput = document.getElementById('fileInput');
         if (!fileInput.files.length) {
           alert("Por favor selecciona un archivo.");
           return;
         }
-
         const formData = new FormData();
         formData.append('file', fileInput.files[0]);
-
         fetch('https://miweb-mj38.onrender.com/upload', {
           method: 'POST',
           body: formData
