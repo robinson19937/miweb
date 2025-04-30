@@ -1,10 +1,12 @@
 from flask import Flask, request, send_from_directory, render_template_string
+from flask_cors import CORS
 import os
 
 app = Flask(__name__)
+CORS(app)
 
-# Ruta montada desde Windows para subir archivos
-UPLOAD_FOLDER = "/mnt/c/Users/robin/OneDrive/Escritorio/archivos"
+# Carpeta local para guardar archivos subidos (Render puede escribir aquí)
+UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -13,12 +15,12 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 def index():
     return send_from_directory('.', 'index.html')
 
-# Ruta para archivos estáticos (sketch.js, fondo.png, etc.)
+# Ruta para archivos estáticos (como sketch.js, fondo.png, etc.)
 @app.route('/<path:path>')
 def static_file(path):
     return send_from_directory('.', path)
 
-# Ruta para recibir archivos subidos
+# Ruta para recibir archivos subidos desde el formulario
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
@@ -45,6 +47,8 @@ def upload_file():
         </body></html>
     ''')
 
+# Punto de entrada para gunicorn
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0', port=5000)
+
 
