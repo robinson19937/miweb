@@ -1,7 +1,7 @@
 let fondo;
 let mostrarInfo = false;
 let botonX = 20, botonY = 20, botonW = 180, botonH = 50;
-let infoBoxW = 320, infoBoxH = 220;
+let infoBoxW = 330, infoBoxH = 240;
 
 function preload() {
   fondo = loadImage('fondo.png');
@@ -17,7 +17,7 @@ function draw() {
   background(0);
   image(fondo, 0, 0, width, height);
 
-  fill(30, 144, 255, 230);
+  fill(30, 144, 255, 230); // Color botón
   noStroke();
   rect(botonX, botonY, botonW, botonH, 10);
   fill(255);
@@ -26,7 +26,7 @@ function draw() {
   text("Quiénes somos", botonX + botonW / 2, botonY + botonH / 2);
 
   if (mostrarInfo) {
-    fill(255, 250);
+    fill(255, 245);
     stroke(0);
     strokeWeight(1);
     rect(botonX, botonY + botonH + 10, infoBoxW, infoBoxH, 10);
