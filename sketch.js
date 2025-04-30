@@ -4,7 +4,7 @@ let botonX = 20, botonY = 20, botonW = 180, botonH = 50;
 let infoBoxW = 330, infoBoxH = 240;
 
 function preload() {
-  fondo = loadImage('fondo.png');
+  fondo = loadImage('roblop.png');
 }
 
 function setup() {
