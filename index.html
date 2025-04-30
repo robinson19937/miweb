@@ -14,12 +14,12 @@
 
       #uploadForm {
         position: absolute;
-        bottom: 100px; /* Más arriba que antes */
+        bottom: 100px;
         left: 20px;
         background: rgba(255, 255, 255, 0.85);
         padding: 15px 20px;
         border-radius: 10px;
-        font-size: 18px; /* Texto más grande */
+        font-size: 18px;
         font-family: sans-serif;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       }
@@ -55,16 +55,42 @@
     </style>
   </head>
   <body>
-    <form id="uploadForm" action="http://localhost:5000/upload" method="POST" enctype="multipart/form-data">
+    <form id="uploadForm" enctype="multipart/form-data">
       <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label><br>
-      <input type="file" name="file"><br>
+      <input type="file" name="file" id="fileInput"><br>
       <input type="submit" value="Subir">
     </form>
 
     <div id="githubLink">
       <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
     </div>
+
+    <script>
+      document.getElementById('uploadForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('fileInput');
+        if (!fileInput.files.length) {
+          alert("Por favor selecciona un archivo.");
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        fetch('https://miweb-mj38.onrender.com/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.text())
+        .then(data => {
+          document.body.innerHTML = data;
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert("Hubo un error al subir el archivo.");
+        });
+      });
+    </script>
   </body>
 </html>
-
-
