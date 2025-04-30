@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Subida de trabajos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"></script>
+    <script src="sketch.js"></script>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+      }
+
+      #uploadForm {
+        position: absolute;
+        bottom: 100px; /* Más arriba que antes */
+        left: 20px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 15px 20px;
+        border-radius: 10px;
+        font-size: 18px; /* Texto más grande */
+        font-family: sans-serif;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      }
+
+      #uploadForm input[type="file"],
+      #uploadForm input[type="submit"] {
+        margin-top: 10px;
+        font-size: 16px;
+        padding: 5px;
+      }
+
+      #githubLink {
+        position: absolute;
+        bottom: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-family: sans-serif;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      }
+
+      #githubLink a {
+        color: #0000ee;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      #githubLink a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <form id="uploadForm" action="http://localhost:5000/upload" method="POST" enctype="multipart/form-data">
+      <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label><br>
+      <input type="file" name="file"><br>
+      <input type="submit" value="Subir">
+    </form>
+
+    <div id="githubLink">
+      <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
+    </div>
+  </body>
+</html>
+
+
