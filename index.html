@@ -46,9 +46,29 @@
       font-weight: bold;
     }
 
+    #returnButton {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 20px;
+      width: 90%;
+      max-width: 280px;
+      border-radius: 12px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 10;
+      cursor: pointer;
+    }
+
     #githubLink {
       position: absolute;
-      bottom: 30px; /* Se bajó desde 60px */
+      bottom: 30px;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.9);
@@ -72,7 +92,8 @@
 
     @media (prefers-color-scheme: dark) {
       #uploadForm,
-      #githubLink {
+      #githubLink,
+      #returnButton {
         background: rgba(30, 30, 30, 0.9);
         color: #fff;
         box-shadow: 0 4px 15px rgba(255,255,255,0.1);
@@ -82,7 +103,8 @@
         color: #66ccff;
       }
 
-      #uploadForm input[type="submit"] {
+      #uploadForm input[type="submit"],
+      #returnButton {
         background-color: #66bb6a;
       }
     }
@@ -94,6 +116,8 @@
     <input type="file" name="file" id="fileInput"><br>
     <input type="submit" value="Subir">
   </form>
+
+  <button id="returnButton" onclick="location.reload()">Volver al menú principal</button>
 
   <div id="githubLink">
     <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
@@ -136,13 +160,17 @@
             ✅ Archivo subido exitosamente<br><br>
             <button onclick='location.reload()' style="
               margin-top: 20px;
-              font-size: 24px;
-              padding: 15px 30px;
+              font-size: 18px;
+              padding: 15px 20px;
+              width: 90%;
+              max-width: 280px;
               border: none;
               border-radius: 12px;
               background-color: #4CAF50;
               color: white;
               font-weight: bold;
+              box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+              cursor: pointer;
             ">Volver al menú principal</button>
           </div>
           <style>
