@@ -122,11 +122,12 @@ function handleKeyPress(event) {
 }
 
 function touchMoved() {
+  // Corregir el movimiento del ángulo con el toque
   let deltaX = mouseX - previousTouchX;
-  angleInput += deltaX * 0.1;
+  angleInput += deltaX * 0.2; // Ajustamos la velocidad del movimiento del ángulo
   angleInput = constrain(angleInput, 0, 360);
-  previousTouchX = mouseX;
-  return false;
+  previousTouchX = mouseX; // Actualizar la posición anterior del dedo
+  return false; // Evitar el comportamiento predeterminado
 }
 
 function windowResized() {
