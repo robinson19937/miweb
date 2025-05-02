@@ -11,27 +11,20 @@
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100">
 
   <!-- Contenido -->
-  <div class="max-w-2xl mx-auto p-4">
-    <h1 class="text-xl md:text-2xl font-bold mb-4">
+  <div class="max-w-2xl mx-auto px-4 py-2">
+    <h1 class="text-lg md:text-2xl font-bold mb-2 leading-tight">
       Red Neuronal para el Cálculo de Funciones Trigonométricas
     </h1>
-    <p class="text-base md:text-lg mb-4">
-      En este proyecto usamos redes neuronales para entrenar la web de tal forma que pueda calcular o predecir valores trigonométricos. Esto es un avance realmente significativo en el ámbito de la programación, ya que no estamos usando una calculadora; solo estamos usando datos para que la fuente se alimente de esos datos y pueda aprender a hacer cálculos trigonométricos. En pocas palabras, es como si le estuviéramos enseñando a hacer estos cálculos de igual forma a como un ser humano lo haría. Por eso se llaman redes neuronales, mientras la red se entrena es posible que exista una pequeña varianza ya que mientras se entrena podria sacar resultados no muy precisos pero si muy aproximados ejemplo , el seno de 90 es 1 podria sacar una aproximacion como 0.95
+    <p class="text-sm md:text-base mb-2 leading-snug">
+      En este proyecto usamos redes neuronales para que la web aprenda a calcular valores trigonométricos. No usamos una calculadora tradicional, sino un modelo que aprende de datos. Por eso puede haber pequeñas diferencias mientras se entrena. Por ejemplo, el seno de 90 es 1, pero el modelo podría predecir algo como 0.95.
     </p>
-    <p class="text-base md:text-lg font-bold">
+    <p class="text-sm md:text-base font-bold">
       Desarrollado por: Robinson López
     </p>
   </div>
 
-  <!-- Botón de reinicio -->
-  <div class="max-w-2xl mx-auto text-center my-4">
-    <button id="resetBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 dark:hover:bg-red-500 transition">
-      🔄 Reiniciar Modelo
-    </button>
-  </div>
-
   <!-- Contenedor del canvas -->
-  <div id="canvas-container" class="flex justify-center mt-12 md:mt-8"></div>
+  <div id="canvas-container" class="flex justify-center mt-4 md:mt-6"></div>
 
   <script>
 let model;
@@ -44,7 +37,7 @@ let canvas;
 let loadingModel = true;
 
 async function setup() {
-  let canvasSize = min(windowWidth * 0.9, windowHeight * 0.45);
+  let canvasSize = min(windowWidth * 0.95, windowHeight * 0.5);
   canvas = createCanvas(canvasSize, canvasSize);
   canvas.parent('canvas-container');
 
@@ -111,14 +104,14 @@ async function trainModel() {
 function draw() {
   background(255);
   let textScale = width / 400;
-  textSize(16 * textScale);
+  textSize(14 * textScale);
   textAlign(LEFT);
   fill(0);
 
   if (loadingModel) {
     push();
-    textSize(26 * textScale);
-    fill(255, 0, 0); // Rojo fuerte
+    textSize(24 * textScale);
+    fill(255, 0, 0);
     textStyle(BOLD);
     textAlign(CENTER, CENTER);
     text("⚠️ Entrenando red neuronal...\nEsto puede tardar 1-2 minutos", width / 2, height / 2);
@@ -128,7 +121,7 @@ function draw() {
   }
 
   text(`Ángulo (grados): ${angleInput.toFixed(2)}`, 10 * textScale, 20 * textScale);
-  text('Usa las flechas o desliza para cambiar el ángulo', 10 * textScale, 40 * textScale);
+  text('Desliza o usa flechas para cambiar ángulo', 10 * textScale, 40 * textScale);
 
   if (isTrained && model) {
     try {
@@ -184,24 +177,10 @@ function touchMoved() {
 }
 
 function windowResized() {
-  let canvasSize = min(windowWidth * 0.9, windowHeight * 0.45);
+  let canvasSize = min(windowWidth * 0.95, windowHeight * 0.5);
   resizeCanvas(canvasSize, canvasSize);
 }
-
-document.getElementById('resetBtn').addEventListener('click', async () => {
-  if (confirm('¿Estás seguro de que deseas reiniciar el modelo? Esto eliminará el modelo actual.')) {
-    localStorage.removeItem('tensorflowjs_models/mi-modelo/info');
-    localStorage.removeItem('tensorflowjs_models/mi-modelo/model_topology');
-    localStorage.removeItem('tensorflowjs_models/mi-modelo/weight_data');
-    localStorage.removeItem('tensorflowjs_models/mi-modelo/weight_specs');
-
-    isTrained = false;
-    trainingData = [];
-    prediction = [0, 0, 0];
-    loadingModel = true;
-    await trainModel();
-  }
-});
   </script>
 </body>
 </html>
+
