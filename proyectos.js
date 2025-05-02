@@ -6,7 +6,7 @@ let isTrained = false;
 let previousTouchX = 0;  // Variable para almacenar la posición anterior del toque
 let canvas;
 
-function setup() {
+async function setup() {
   // Ajustar el tamaño del canvas según el tamaño de la ventana
   canvas = createCanvas(windowWidth * 0.9, windowHeight * 0.7);  // 90% de ancho y 70% de alto
   canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);  // Centrar el canvas
@@ -17,36 +17,36 @@ function setup() {
     model = await tf.loadLayersModel('localstorage://mi-modelo');
     isTrained = true;
   } else {
-    // Si no hay un modelo guardado, creamos uno nuevo
+    // Si no hay un modelo guardado, creamos uno nuevo y lo entrenamos
     console.log("Entrenando modelo...");
-    model = tf.sequential();
-    model.add(tf.layers.dense({units: 64, activation: 'relu', inputShape: [1]})); // Aumento de unidades
-    model.add(tf.layers.dense({units: 32, activation: 'relu'})); // Capa adicional
-    model.add(tf.layers.dense({units: 3})); // Salidas: seno, coseno, radianes
-    model.compile({
-      optimizer: 'adam',
-      loss: 'meanSquaredError'
-    });
-
-    // Generar datos de entrenamiento
-    for (let i = 0; i < 2000; i++) { // Aumento la cantidad de datos de entrenamiento
-      let deg = random(0, 360);
-      let rad = deg * PI / 180;
-      trainingData.push({
-        input: deg / 360, // Normalizamos el ángulo (0 a 1)
-        output: [sin(rad), cos(rad), rad]
-      });
-    }
-
-    // Entrenar el modelo
-    trainModel();
+    await trainModel(); // Asegurarnos de que el modelo se entrene y guarde
   }
 }
 
 async function trainModel() {
+  model = tf.sequential();
+  model.add(tf.layers.dense({units: 64, activation: 'relu', inputShape: [1]})); // Aumento de unidades
+  model.add(tf.layers.dense({units: 32, activation: 'relu'})); // Capa adicional
+  model.add(tf.layers.dense({units: 3})); // Salidas: seno, coseno, radianes
+  model.compile({
+    optimizer: 'adam',
+    loss: 'meanSquaredError'
+  });
+
+  // Generar datos de entrenamiento
+  for (let i = 0; i < 2000; i++) { // Aumento la cantidad de datos de entrenamiento
+    let deg = random(0, 360);
+    let rad = deg * PI / 180;
+    trainingData.push({
+      input: deg / 360, // Normalizamos el ángulo (0 a 1)
+      output: [sin(rad), cos(rad), rad]
+    });
+  }
+
   const xs = tf.tensor2d(trainingData.map(d => [d.input]));
   const ys = tf.tensor2d(trainingData.map(d => d.output));
   
+  // Entrenar el modelo
   await model.fit(xs, ys, {
     epochs: 300, // Aumento el número de épocas
     shuffle: true,
@@ -63,6 +63,7 @@ async function trainModel() {
 
   // Guardar el modelo entrenado en localStorage
   await model.save('localstorage://mi-modelo');
+  console.log('Modelo guardado en localStorage');
 }
 
 function draw() {
@@ -136,4 +137,3 @@ function windowResized() {
   resizeCanvas(windowWidth * 0.9, windowHeight * 0.7);  // Re-ajustamos el tamaño del canvas
   canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);  // Recentramos el canvas
 }
-
