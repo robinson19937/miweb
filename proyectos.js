@@ -9,8 +9,8 @@ function setup() {
   
   // Crear el modelo
   model = tf.sequential();
-  model.add(tf.layers.dense({units: 64, activation: 'relu', inputShape: [1]})); // Aumento de unidades
-  model.add(tf.layers.dense({units: 32, activation: 'relu'})); // Capa adicional
+  model.add(tf.layers.dense({units: 64, activation: 'relu', inputShape: [1]}));
+  model.add(tf.layers.dense({units: 32, activation: 'relu'}));
   model.add(tf.layers.dense({units: 3})); // Salidas: seno, coseno, radianes
   model.compile({
     optimizer: 'adam',
@@ -18,11 +18,11 @@ function setup() {
   });
 
   // Generar datos de entrenamiento
-  for (let i = 0; i < 2000; i++) { // Aumento la cantidad de datos de entrenamiento
+  for (let i = 0; i < 2000; i++) {
     let deg = random(0, 360);
     let rad = deg * PI / 180;
     trainingData.push({
-      input: deg / 360, // Normalizamos el ángulo (0 a 1)
+      input: deg / 360,
       output: [sin(rad), cos(rad), rad]
     });
   }
@@ -36,11 +36,11 @@ async function trainModel() {
   const ys = tf.tensor2d(trainingData.map(d => d.output));
   
   await model.fit(xs, ys, {
-    epochs: 300, // Aumento el número de épocas
+    epochs: 300,
     shuffle: true,
     callbacks: {
       onEpochEnd: (epoch, logs) => {
-        console.log(Época ${epoch}: pérdida = ${logs.loss});
+        console.log(`Época ${epoch}: pérdida = ${logs.loss}`);
       }
     }
   });
@@ -56,7 +56,7 @@ function draw() {
   // Interfaz de entrada
   textSize(16);
   textAlign(LEFT);
-  text(Ángulo (grados): ${angleInput.toFixed(2)}, 20, 30);
+  text(`Ángulo (grados): ${angleInput.toFixed(2)}`, 20, 30);
   text('Presiona flechas izquierda/derecha para cambiar el ángulo', 20, 50);
   
   if (isTrained) {
@@ -68,18 +68,18 @@ function draw() {
     outputTensor.dispose();
     
     // Mostrar resultados
-    text(Seno: ${prediction[0].toFixed(4)}, 20, 80);
-    text(Coseno: ${prediction[1].toFixed(4)}, 20, 100);
-    text(Radianes: ${(prediction[2] * (2 * PI)).toFixed(4)}, 20, 120); // Corregir el valor de los radianes
+    text(`Seno: ${prediction[0].toFixed(4)}`, 20, 80);
+    text(`Coseno: ${prediction[1].toFixed(4)}`, 20, 100);
+    text(`Radianes: ${prediction[2].toFixed(4)}`, 20, 120);
     
     // Dibujar gráfica
     translate(width / 2, height / 2);
-    scale(1, -1); // Invertir eje Y para que sea más intuitivo
+    scale(1, -1);
     
     // Ejes
     stroke(0);
-    line(-200, 0, 200, 0); // Eje X
-    line(0, -150, 0, 150); // Eje Y
+    line(-200, 0, 200, 0);
+    line(0, -150, 0, 150);
     
     // Círculo unitario
     noFill();
