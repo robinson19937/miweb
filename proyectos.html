@@ -1,108 +1,31 @@
-<!DOCTYPE html>
-<html lang="es">
+ <!DOCTYPE html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Modelo de Redes Neuronales para Cálculos Trigonométricos</title>
+  <title>Model Demo</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest"></script>
   <style>
-    /* Estilos generales */
     body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-color);
-      color: var(--text-color);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
-      text-align: center;
-      box-sizing: border-box;
-    }
-
-    /* Esquema de color claro y oscuro */
-    :root {
-      --bg-color: white;
-      --text-color: black;
-      --highlight-color: #FF6347; /* Color de énfasis */
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg-color: #121212;
-        --text-color: white;
-      }
-    }
-
-    /* Títulos y texto */
-    h1 {
-      font-size: 24px;
-      margin-bottom: 20px;
-    }
-
-    p {
-      font-size: 16px;
-      margin-bottom: 20px;
-    }
-
-    /* Estilo del canvas */
-    #defaultCanvas0 {
-      margin-bottom: 20px;
-    }
-
-    /* Descripción del proyecto */
-    .project-description {
+      margin: 0;
       padding: 10px;
-      font-size: 14px;
-      background-color: var(--bg-color);
-      color: var(--text-color);
-      border: 1px solid var(--highlight-color);
-      width: 80%;
-      max-width: 600px;
-      box-sizing: border-box;
-      margin-top: 30px;
-      border-radius: 10px;
+      font-family: Arial, sans-serif;
     }
-
-    /* Ajustes responsivos */
-    @media (max-width: 768px) {
-      body {
-        padding: 10px;
-      }
-
-      h1 {
-        font-size: 20px;
-      }
-
-      p {
-        font-size: 14px;
-      }
-
-      .project-description {
-        width: 100%;
-      }
+    #description {
+      max-width: 800px;
+      text-align: center;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Modelo de Redes Neuronales para Cálculos Trigonométricos</h1>
-  
-  <!-- El canvas se dibuja aquí -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tensorflow/2.0.0/tf.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-  
-  <!-- El archivo p5.js -->
-  <script src="proyectos.js"></script>
-
-  <!-- Descripción del Proyecto -->
-  <div class="project-description">
-    <h2>Descripción del Proyecto</h2>
-    <p>En el siguiente ejemplo, podemos ver cómo al mover las flechas del teclado cambiamos el ángulo en grados. A partir de este ángulo, el programa mostrará su punto en <b>X</b> (coseno) y en <b>Y</b> (seno), así como su definición en radianes.</p>
-    <p>Lo interesante de este proyecto es que, a pesar de su complejidad, no utilizamos una línea de código extensa. Esto se debe a que empleamos redes neuronales para enseñar a la computadora a calcular estos datos trigonométricos. Dado que los cálculos se hacen a partir de predicciones, es importante destacar que no son 100% precisos. Por ejemplo, el seno de 90 grados debería ser 1, pero el modelo puede mostrar 0.99. Aunque existe una pequeña variación, esto sigue siendo sorprendentemente cercano a la realidad.</p>
-    <p>Lo realmente asombroso es que no usamos una calculadora interna para hacer estos cálculos, sino que entrenamos a la máquina con algunos datos para que aprenda por sí misma cómo realizar estos cálculos matemáticos. Esto abre un mundo de posibilidades, ya que podemos enseñar a la máquina a hacer tareas complejas, lo que no solo ahorra tiempo y líneas de código, sino que también amplía nuestros horizontes mucho más allá.</p>
-    <p><strong>Desarrollado por: Robinson López</strong></p>
+  <div id="description">
+    <h1>Trigonometric Model Demo</h1>
+    <p>This app uses a neural network to predict sine, cosine, and radians from an angle.</p>
   </div>
-
+  <script src="proyectos.js"></script>
 </body>
 </html>
