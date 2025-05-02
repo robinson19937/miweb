@@ -126,7 +126,7 @@ function touchMoved() {
   let deltaX = mouseX - previousTouchX;
 
   // Ajustamos el valor de deltaX para que la sensibilidad sea más uniforme
-  angleInput += deltaX * 0.3; // Cambiar el factor de sensibilidad para un control más suave
+  angleInput += deltaX * 0.5; // Cambiar el factor de sensibilidad para un control más suave
 
   // Aseguramos que el ángulo se mantenga entre 0 y 360
   angleInput = angleInput % 360; // Esto asegura que el valor se quede dentro del rango 0-360
@@ -135,6 +135,9 @@ function touchMoved() {
   if (angleInput < 0) {
     angleInput += 360;
   }
+
+  // Calcular un ángulo adecuado para todo el rango
+  angleInput = constrain(angleInput, 0, 360); // Aseguramos que el valor esté dentro de 0-360 grados
 
   previousTouchX = mouseX; // Actualizamos la posición anterior del dedo
   return false; // Evitar el comportamiento predeterminado
