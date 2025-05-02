@@ -7,17 +7,26 @@
 </head>
 <body class="bg-gray-100">
   <div class="max-w-2xl mx-auto p-4 text-gray-800">
-    <p class="mb-4 text-sm md:text-base">
-      Lo interesante de este proyecto es que, a pesar de su complejidad, no utilizamos una línea de código extensa. Esto se debe a que empleamos redes neuronales para enseñar a la computadora a calcular estos datos trigonométricos. Dado que los cálculos se hacen a partir de predicciones, es importante destacar que no son 100% precisos. Por ejemplo, el seno de 90 grados debería ser 1, pero el modelo puede mostrar 0.99. Aunque existe una pequeña variación, esto sigue siendo sorprendentemente cercano a la realidad.
+    <h1 class="text-xl md:text-2xl font-bold mb-4">Red Neuronal para el Cálculo de Funciones Trigonométricas</h1>
+    <p class="text-base md:text-lg mb-4">
+      En este proyecto usamos redes neuronales para entrenar la web de tal forma que pueda calcular o predecir valores trigonométricos. Esto es un avance realmente significativo en el ámbito de la programación, ya que no estamos usando una calculadora; solo estamos usando datos para que la fuente se alimente de esos datos y pueda aprender a hacer cálculos trigonométricos. En pocas palabras, es como si le estuviéramos enseñando a hacer estos cálculos de igual forma a como un ser humano lo haría. Por eso se llaman redes neuronales, mientras la red se entrena es posible que exista una pequeña varianza ya que mientras se entrena podria sacar resultados no muy precisos pero si muy aproximados ejemplo , el seno de 90 es 1 podria sacar una aproximacion como 0.95
     </p>
-    <p class="mb-4 text-sm md:text-base">
-      Lo realmente asombroso es que no usamos una calculadora interna para hacer estos cálculos, sino que entrenamos a la máquina con algunos datos para que aprenda por sí misma cómo realizar estos cálculos matemáticos. Esto abre un mundo de posibilidades, ya que podemos enseñar a la máquina a hacer tareas complejas, lo que no solo ahorra tiempo y líneas de código, sino que también amplía nuestros horizontes mucho más allá.
-    </p>
-    <p class="text-sm md:text-base font-bold">
+    <p class="text-base md:text-lg font-bold">
       Desarrollado por: Robinson López
     </p>
   </div>
-<script>
+
+  <!-- Botón para reiniciar modelo -->
+  <div class="max-w-2xl mx-auto text-center my-4">
+    <button id="resetBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+      🔄 Reiniciar Modelo
+    </button>
+  </div>
+
+  <!-- Contenedor para el canvas -->
+  <div id="canvas-container" class="flex justify-center mt-8"></div>
+
+  <script>
 let model;
 let angleInput = 0;
 let prediction = [0, 0, 0]; // [sin, cos, radianes]
@@ -30,7 +39,7 @@ let loadingModel = true;
 async function setup() {
   let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
   canvas = createCanvas(canvasSize, canvasSize);
-  canvas.position((windowWidth - width) / 2, 150);
+  canvas.parent('canvas-container');
 
   console.log("Iniciando setup...");
 
@@ -62,6 +71,7 @@ async function trainModel() {
   model.add(tf.layers.dense({ units: 3 }));
   model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
 
+  trainingData = [];
   for (let i = 0; i < 1000; i++) {
     let deg = random(0, 360);
     let rad = deg * PI / 180;
@@ -111,7 +121,7 @@ function draw() {
     textAlign(CENTER, CENTER);
     textSize(24 * textScale);
     fill(50);
-    text("⏳ Cargando o entrenando modelo...", width / 2, height / 2);
+    text("⏳ Cargando o entrenando modelo puede tardar de 1 a 2 minutos mientras se entrena la red neuronal ", width / 2, height / 2);
     pop();
     return;
   }
@@ -175,8 +185,24 @@ function touchMoved() {
 function windowResized() {
   let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
   resizeCanvas(canvasSize, canvasSize);
-  canvas.position((windowWidth - width) / 2, 150);
 }
-</script>
+
+// Función para reiniciar modelo
+document.getElementById('resetBtn').addEventListener('click', async () => {
+  if (confirm('¿Estás seguro de que deseas reiniciar el modelo? Esto eliminará el modelo actual.')) {
+    localStorage.removeItem('tensorflowjs_models/mi-modelo/info');
+    localStorage.removeItem('tensorflowjs_models/mi-modelo/model_topology');
+    localStorage.removeItem('tensorflowjs_models/mi-modelo/weight_data');
+    localStorage.removeItem('tensorflowjs_models/mi-modelo/weight_specs');
+
+    isTrained = false;
+    trainingData = [];
+    prediction = [0, 0, 0];
+    loadingModel = true;
+    console.log("Modelo eliminado. Iniciando nuevo entrenamiento...");
+    await trainModel();
+  }
+});
+  </script>
 </body>
 </html>
