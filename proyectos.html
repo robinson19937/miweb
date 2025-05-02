@@ -41,7 +41,6 @@ async function setup() {
   canvas.parent('canvas-container');
 
   try {
-    // Carga el modelo desde los archivos locales en GitHub Pages
     model = await tf.loadLayersModel('mi-modelo.json');
     isTrained = true;
     loadingModel = false;
@@ -122,25 +121,27 @@ function handleKeyPress(event) {
 }
 
 function touchMoved() {
-  // Corregir el movimiento del ángulo con el toque
+  // Calculamos el movimiento del ángulo de forma más precisa
   let deltaX = mouseX - previousTouchX;
 
-  // Ajustamos el valor de deltaX para que la sensibilidad sea más uniforme
-  angleInput += deltaX * 0.5; // Cambiar el factor de sensibilidad para un control más suave
+  // Ajustamos el multiplicador de deltaX para que cubra el rango completo
+  // He aumentado el valor del multiplicador a 1.2 para tener una respuesta más precisa
+  angleInput += deltaX * 1.2; // Puedes probar con valores como 1.0 o 1.5 dependiendo del comportamiento
 
-  // Aseguramos que el ángulo se mantenga entre 0 y 360
+  // Aseguramos que el valor del ángulo se mantenga entre 0 y 360 grados
   angleInput = angleInput % 360; // Esto asegura que el valor se quede dentro del rango 0-360
 
-  // Si el ángulo es negativo, lo ajustamos para que sea un número positivo
   if (angleInput < 0) {
-    angleInput += 360;
+    angleInput += 360; // Ajustamos si el ángulo es negativo
   }
 
-  // Calcular un ángulo adecuado para todo el rango
-  angleInput = constrain(angleInput, 0, 360); // Aseguramos que el valor esté dentro de 0-360 grados
+  // Aseguramos que el ángulo siempre esté dentro del rango [0, 360]
+  angleInput = constrain(angleInput, 0, 360);
 
-  previousTouchX = mouseX; // Actualizamos la posición anterior del dedo
-  return false; // Evitar el comportamiento predeterminado
+  // Actualizamos la posición anterior del dedo
+  previousTouchX = mouseX;
+
+  return false; // Evita el comportamiento predeterminado
 }
 
 function windowResized() {
