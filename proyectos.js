@@ -15,7 +15,7 @@ async function setup() {
   console.log("Starting setup...");
 
   try {
-    // Check if model exists in localStorage
+    // Attempt to load the model from localStorage
     if (localStorage.getItem('mi-modelo')) {
       console.log("Attempting to load model from localStorage...");
       model = await tf.loadLayersModel('localstorage://mi-modelo');
@@ -63,7 +63,7 @@ async function trainModel() {
   console.log("Training model...");
   try {
     await model.fit(xs, ys, {
-      epochs: 100, // Reduced to 100
+      epochs: 20,  // Reduced to 20 epochs for faster testing
       shuffle: true,
       callbacks: {
         onEpochEnd: (epoch, logs) => {
@@ -128,47 +128,3 @@ function draw() {
       // Unit circle
       noFill();
       ellipse(0, 0, width * 0.5, width * 0.5);
-
-      // Point on circle
-      let x = prediction[1] * (width * 0.25);
-      let y = prediction[0] * (width * 0.25);
-      fill(255, 0, 0);
-      ellipse(x, y, 10 * textScale, 10 * textScale);
-
-      // Line from origin to point
-      stroke(255, 0, 0);
-      line(0, 0, x, y);
-    } catch (error) {
-      console.error("Prediction error:", error);
-    }
-  } else {
-    text('Loading or training model...', 10 * textScale, height - 80 * textScale);
-  }
-}
-
-function handleKeyPress(event) {
-  if (event.key === 'ArrowLeft') {
-    angleInput -= 1;
-  } else if (event.key === 'ArrowRight') {
-    angleInput += 1;
-  }
-  angleInput = constrain(angleInput, 0, 360);
-}
-
-function touchMoved() {
-  let deltaX = mouseX - previousTouchX;
-  
-  // Aumentar o reducir la sensibilidad del movimiento
-  angleInput += deltaX * 0.2;  // Ajustado a 0.2 para mayor sensibilidad
-
-  // Asegurarse de que el valor esté limitado
-  angleInput = constrain(angleInput, 0, 360);
-  previousTouchX = mouseX;
-  return false;
-}
-
-function windowResized() {
-  let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
-  resizeCanvas(canvasSize, canvasSize);
-  canvas.position((windowWidth - width) / 2, 150);
-}
