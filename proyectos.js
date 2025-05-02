@@ -3,137 +3,147 @@ let angleInput = 0;
 let prediction = [0, 0, 0]; // [sin, cos, radianes]
 let trainingData = [];
 let isTrained = false;
-let previousTouchX = 0;  // Variable para almacenar la posición anterior del toque
+let previousTouchX = 0;
 let canvas;
 
 async function setup() {
-  // Ajustar el tamaño del canvas según el tamaño de la ventana
-  canvas = createCanvas(windowWidth * 0.9, windowHeight * 0.7);  // 90% de ancho y 70% de alto
-  canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);  // Centrar el canvas
+  // Create canvas with responsive dimensions (80% of the smaller dimension for better fit)
+  let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
+  canvas = createCanvas(canvasSize, canvasSize);
+  // Position canvas below the project description (assuming description is ~100px tall)
+  canvas.position((windowWidth - width) / 2, 150); // Adjusted Y-position to avoid overlap
 
-  // Si ya hay un modelo guardado en localStorage, lo cargamos
+  // Load or train model
   if (localStorage.getItem('mi-modelo')) {
-    console.log("Modelo cargado desde localStorage");
+    console.log("Loading model from localStorage");
     model = await tf.loadLayersModel('localstorage://mi-modelo');
     isTrained = true;
   } else {
-    // Si no hay un modelo guardado, creamos uno nuevo y lo entrenamos
-    console.log("Entrenando modelo...");
-    await trainModel(); // Asegurarnos de que el modelo se entrene y guarde
+    console.log("Training model...");
+    await trainModel();
   }
+
+  // Add arrow key event listeners for web
+  window.addEventListener('keydown', handleKeyPress);
 }
 
 async function trainModel() {
   model = tf.sequential();
-  model.add(tf.layers.dense({units: 64, activation: 'relu', inputShape: [1]})); // Aumento de unidades
-  model.add(tf.layers.dense({units: 32, activation: 'relu'})); // Capa adicional
-  model.add(tf.layers.dense({units: 3})); // Salidas: seno, coseno, radianes
+  model.add(tf.layers.dense({units: 64, activation: 'relu', inputShape: [1]}));
+  model.add(tf.layers.dense({units: 32, activation: 'relu'}));
+  model.add(tf.layersexperts: dense({units: 3}));
   model.compile({
     optimizer: 'adam',
     loss: 'meanSquaredError'
   });
 
-  // Generar datos de entrenamiento
-  for (let i = 0; i < 2000; i++) { // Aumento la cantidad de datos de entrenamiento
+  // Generate training data (reduced dataset size for faster training)
+  for (let i = 0; i < 1000; i++) { // Reduced from 2000 to speed up
     let deg = random(0, 360);
     let rad = deg * PI / 180;
     trainingData.push({
-      input: deg / 360, // Normalizamos el ángulo (0 a 1)
+      input: deg / 360,
       output: [sin(rad), cos(rad), rad]
     });
   }
 
   const xs = tf.tensor2d(trainingData.map(d => [d.input]));
   const ys = tf.tensor2d(trainingData.map(d => d.output));
-  
-  // Entrenar el modelo
+
+  // Train model with fewer epochs for faster loading
   await model.fit(xs, ys, {
-    epochs: 300, // Aumento el número de épocas
+    epochs: 150, // Reduced from 300
     shuffle: true,
     callbacks: {
       onEpochEnd: (epoch, logs) => {
-        console.log(`Época ${epoch}: pérdida = ${logs.loss}`);
+        console.log(`Epoch ${epoch}: loss = ${logs.loss}`);
       }
     }
   });
-  
+
   xs.dispose();
   ys.dispose();
   isTrained = true;
 
-  // Guardar el modelo entrenado en localStorage
+  // Save model
   await model.save('localstorage://mi-modelo');
-  console.log('Modelo guardado en localStorage');
+  console.log('Model saved to localStorage');
 }
 
 function draw() {
   background(255);
-  
-  // Interfaz de entrada
-  textSize(width * 0.04); // Ajustamos el tamaño del texto en relación al tamaño del canvas
+
+  // Responsive text size
+  let textScale = width / 400; // Scale text based on canvas width
+  textSize(16 * textScale);
   textAlign(LEFT);
-  text(`Ángulo (grados): ${angleInput.toFixed(2)}`, 20, 30);
-  text('Desliza el dedo para cambiar el ángulo', 20, 50);
   
+  // Display instructions and angle (positioned to avoid overlap)
+  text(`Angle (degrees): ${angleInput.toFixed(2)}`, 10 * textScale, 20 * textScale);
+  text('Use arrows or swipe to change angle', 10 * textScale, 40 * textScale);
+
   if (isTrained) {
-    // Hacer predicción (normalizamos el ángulo a [0, 1])
+    // Predict
     let inputTensor = tf.tensor2d([[angleInput / 360]]);
     let outputTensor = model.predict(inputTensor);
     prediction = outputTensor.dataSync();
     inputTensor.dispose();
     outputTensor.dispose();
-    
-    // Mostrar resultados
-    text(`Seno: ${prediction[0].toFixed(4)}`, 20, height - 80);
-    text(`Coseno: ${prediction[1].toFixed(4)}`, 20, height - 60);
-    text(`Radianes: ${(prediction[2] * (2 * PI)).toFixed(4)}`, 20, height - 40); // Corregir el valor de los radianes
-    
-    // Dibujar gráfica
+
+    // Display results at the bottom
+    text(`Sine: ${prediction[0].toFixed(4)}`, 10 * textScale, height - 60 * textScale);
+    text(`Cosine: ${prediction[1].toFixed(4)}`, 10 * textScale, height - 40 * textScale);
+    text(`Radians: ${(prediction[2]).toFixed(4)}`, 10 * textScale, height - 20 * textScale);
+
+    // Draw graph
     translate(width / 2, height / 2);
-    scale(1, -1); // Invertir eje Y para que sea más intuitivo
-    
-    // Ejes
+    scale(1, -1);
+
+    // Axes
     stroke(0);
-    line(-width * 0.25, 0, width * 0.25, 0); // Eje X
-    line(0, -height * 0.25, 0, height * 0.25); // Eje Y
-    
-    // Círculo unitario
+    line(-width * 0.25, 0, width * 0.25, 0); // X-axis
+    line(0, -height * 0.25, 0, height * 0.25); // Y-axis
+
+    // Unit circle
     noFill();
-    ellipse(0, 0, width * 0.5, width * 0.5); // Usamos el 50% del ancho
-    
-    // Punto en el círculo (usando predicción)
-    let x = prediction[1] * (width * 0.25); // cos * radio
-    let y = prediction[0] * (width * 0.25); // sin * radio
+    ellipse(0, 0, width * 0.5, width * 0.5);
+
+    // Point on circle
+    let x = prediction[1] * (width * 0.25); // cos * radius
+    let y = prediction[0] * (width * 0.25); // sin * radius
     fill(255, 0, 0);
-    ellipse(x, y, 10, 10);
-    
-    // Línea desde el origen al punto
+    ellipse(x, y, 10 * textScale, 10 * textScale);
+
+    // Line from origin to point
     stroke(255, 0, 0);
     line(0, 0, x, y);
   } else {
-    text('Entrenando modelo...', 20, height - 100);
+    text('Training model...', 10 * textScale, height - 80 * textScale);
   }
 }
 
-// Evento táctil para cambiar el ángulo
-function touchMoved() {
-  // Obtener la diferencia entre la posición actual y la anterior
-  let deltaX = mouseX - previousTouchX;
-  
-  // Ajustar el valor del ángulo según el movimiento táctil
-  angleInput += deltaX * 0.1; // El 0.1 es un factor para suavizar el movimiento
-  
-  // Limitar el ángulo entre 0 y 360 grados
-  angleInput = constrain(angleInput, 0, 360);
-  
-  // Actualizar la posición anterior del toque
-  previousTouchX = mouseX;
-  
-  return false;  // Para evitar que la página haga scroll
+// Handle arrow key input
+function handleKeyPress(event) {
+  if (event.key === 'ArrowLeft') {
+    angleInput -= 1; // Decrease angle
+  } else if (event.key === 'ArrowRight') {
+    angleInput += 1; // Increase angle
+  }
+  angleInput = constrain(angleInput, 0, 360); // Keep within bounds
 }
 
-// Aseguramos que el canvas se ajuste al redimensionar la ventana
+// Handle touch input
+function touchMoved() {
+  let deltaX = mouseX - previousTouchX;
+  angleInput += deltaX * 0.1; // Smooth movement
+  angleInput = constrain(angleInput, 0, 360);
+  previousTouchX = mouseX;
+  return false; // Prevent scrolling
+}
+
+// Resize canvas on window resize
 function windowResized() {
-  resizeCanvas(windowWidth * 0.9, windowHeight * 0.7);  // Re-ajustamos el tamaño del canvas
-  canvas.position((windowWidth - width) / 2, (windowHeight - height) / 2);  // Recentramos el canvas
+  let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
+  resizeCanvas(canvasSize, canvasSize);
+  canvas.position((windowWidth - width) / 2, 150); // Recenter, keep below description
 }
