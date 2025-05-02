@@ -1,13 +1,20 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Red Neuronal Trigonométrica</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.21.0/dist/tf.min.js"></script>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-100">
+
+  <!-- Contenido -->
   <div class="max-w-2xl mx-auto p-4 text-gray-800">
-    <h1 class="text-xl md:text-2xl font-bold mb-4">Red Neuronal para el Cálculo de Funciones Trigonométricas</h1>
+    <h1 class="text-xl md:text-2xl font-bold mb-4">
+      Red Neuronal para el Cálculo de Funciones Trigonométricas
+    </h1>
     <p class="text-base md:text-lg mb-4">
       En este proyecto usamos redes neuronales para entrenar la web de tal forma que pueda calcular o predecir valores trigonométricos. Esto es un avance realmente significativo en el ámbito de la programación, ya que no estamos usando una calculadora; solo estamos usando datos para que la fuente se alimente de esos datos y pueda aprender a hacer cálculos trigonométricos. En pocas palabras, es como si le estuviéramos enseñando a hacer estos cálculos de igual forma a como un ser humano lo haría. Por eso se llaman redes neuronales, mientras la red se entrena es posible que exista una pequeña varianza ya que mientras se entrena podria sacar resultados no muy precisos pero si muy aproximados ejemplo , el seno de 90 es 1 podria sacar una aproximacion como 0.95
     </p>
@@ -16,20 +23,20 @@
     </p>
   </div>
 
-  <!-- Botón para reiniciar modelo -->
+  <!-- Botón de reinicio -->
   <div class="max-w-2xl mx-auto text-center my-4">
     <button id="resetBtn" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
       🔄 Reiniciar Modelo
     </button>
   </div>
 
-  <!-- Contenedor para el canvas -->
-  <div id="canvas-container" class="flex justify-center mt-8"></div>
+  <!-- Contenedor del canvas -->
+  <div id="canvas-container" class="flex justify-center mt-12 md:mt-8"></div>
 
   <script>
 let model;
 let angleInput = 0;
-let prediction = [0, 0, 0]; // [sin, cos, radianes]
+let prediction = [0, 0, 0];
 let trainingData = [];
 let isTrained = false;
 let previousTouchX = 0;
@@ -37,21 +44,16 @@ let canvas;
 let loadingModel = true;
 
 async function setup() {
-  let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
+  let canvasSize = min(windowWidth * 0.9, windowHeight * 0.45);
   canvas = createCanvas(canvasSize, canvasSize);
   canvas.parent('canvas-container');
 
-  console.log("Iniciando setup...");
-
   try {
     if (localStorage.getItem('mi-modelo')) {
-      console.log("Cargando modelo desde localStorage...");
       model = await tf.loadLayersModel('localstorage://mi-modelo');
-      console.log("Modelo cargado exitosamente.");
       isTrained = true;
       loadingModel = false;
     } else {
-      console.log("No hay modelo en localStorage. Entrenando uno nuevo...");
       await trainModel();
     }
   } catch (error) {
@@ -84,7 +86,6 @@ async function trainModel() {
   const xs = tf.tensor2d(trainingData.map(d => [d.input]));
   const ys = tf.tensor2d(trainingData.map(d => d.output));
 
-  console.log("Entrenando modelo...");
   try {
     await model.fit(xs, ys, {
       epochs: 100,
@@ -95,11 +96,9 @@ async function trainModel() {
         }
       }
     });
-    console.log("Entrenamiento completado.");
     isTrained = true;
     loadingModel = false;
     await model.save('localstorage://mi-modelo');
-    console.log("Modelo guardado en localStorage.");
   } catch (error) {
     console.error("Error durante el entrenamiento:", error);
     loadingModel = false;
@@ -119,9 +118,9 @@ function draw() {
   if (loadingModel) {
     push();
     textAlign(CENTER, CENTER);
-    textSize(24 * textScale);
-    fill(50);
-    text("⏳ Cargando o entrenando modelo puede tardar de 1 a 2 minutos mientras se entrena la red neuronal ", width / 2, height / 2);
+    textSize(22 * textScale);
+    fill(80);
+    text("La red se está entrenando\n y podría tardar entre 1 y 2 minutos", width / 2, height / 2);
     pop();
     return;
   }
@@ -183,11 +182,11 @@ function touchMoved() {
 }
 
 function windowResized() {
-  let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
+  let canvasSize = min(windowWidth * 0.9, windowHeight * 0.45);
   resizeCanvas(canvasSize, canvasSize);
 }
 
-// Función para reiniciar modelo
+// Botón para reiniciar el modelo
 document.getElementById('resetBtn').addEventListener('click', async () => {
   if (confirm('¿Estás seguro de que deseas reiniciar el modelo? Esto eliminará el modelo actual.')) {
     localStorage.removeItem('tensorflowjs_models/mi-modelo/info');
@@ -199,7 +198,6 @@ document.getElementById('resetBtn').addEventListener('click', async () => {
     trainingData = [];
     prediction = [0, 0, 0];
     loadingModel = true;
-    console.log("Modelo eliminado. Iniciando nuevo entrenamiento...");
     await trainModel();
   }
 });
