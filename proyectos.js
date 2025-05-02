@@ -5,24 +5,24 @@ let trainingData = [];
 let isTrained = false;
 let previousTouchX = 0;
 let canvas;
-let smoothedAngle = 0; // For smoothing touch input
 
 async function setup() {
   // Create canvas with responsive dimensions
   let canvasSize = min(windowWidth * 0.8, windowHeight * 0.6);
   canvas = createCanvas(canvasSize, canvasSize);
-  canvas.position((windowWidth - width) / 2, 150);
+  canvas.position((windowWidth - width) / 2, 150); // Position below description
 
   console.log("Starting setup...");
 
   try {
+    // Check if model exists in localStorage
     if (localStorage.getItem('mi-modelo')) {
-      console.log("Loading model from localStorage...");
+      console.log("Attempting to load model from localStorage...");
       model = await tf.loadLayersModel('localstorage://mi-modelo');
       console.log("Model loaded successfully!");
       isTrained = true;
     } else {
-      console.log("Training new model...");
+      console.log("No model found in localStorage. Training new model...");
       await trainModel();
     }
   } catch (error) {
@@ -37,7 +37,7 @@ async function setup() {
 async function trainModel() {
   console.log("Creating model...");
   model = tf.sequential();
-  model.add(tf.layers.dense({ units: 32, activation: 'relu', inputShape: [1] }));
+  model.add(tf.layers.dense({ units: 32, activation: 'relu', inputShape: [1] })); // Simplified model
   model.add(tf.layers.dense({ units: 16, activation: 'relu' }));
   model.add(tf.layers.dense({ units: 3 }));
   model.compile({
@@ -45,8 +45,9 @@ async function trainModel() {
     loss: 'meanSquaredError'
   });
 
+  // Generate smaller training data for faster testing
   console.log("Generating training data...");
-  for (let i = 0; i = 500; i++) {
+  for (let i = 0; i < 500; i++) { // Reduced to 500 samples
     let deg = random(0, 360);
     let rad = deg * PI / 180;
     trainingData.push({
@@ -58,10 +59,11 @@ async function trainModel() {
   const xs = tf.tensor2d(trainingData.map(d => [d.input]));
   const ys = tf.tensor2d(trainingData.map(d => d.output));
 
+  // Train with fewer epochs
   console.log("Training model...");
   try {
     await model.fit(xs, ys, {
-      epochs: 100,
+      epochs: 100, // Reduced to 100
       shuffle: true,
       callbacks: {
         onEpochEnd: (epoch, logs) => {
@@ -78,6 +80,7 @@ async function trainModel() {
   ys.dispose();
   isTrained = true;
 
+  // Save model
   console.log("Saving model to localStorage...");
   try {
     await model.save('localstorage://mi-modelo');
@@ -90,22 +93,19 @@ async function trainModel() {
 function draw() {
   background(255);
 
-  // Smooth angle for touch input
-  smoothedAngle = lerp(smoothedAngle, angleInput, 0.1); // Smooth transition
-
   // Responsive text size
   let textScale = width / 400;
   textSize(16 * textScale);
   textAlign(LEFT);
 
   // Display UI
-  text(`Angle (degrees): ${smoothedAngle.toFixed(2)}`, 10 * textScale, 20 * textScale);
+  text(`Angle (degrees): ${angleInput.toFixed(2)}`, 10 * textScale, 20 * textScale);
   text('Use arrows or swipe to change angle', 10 * textScale, 40 * textScale);
 
   if (isTrained && model) {
+    // Predict
     try {
-      // Predict using smoothed angle
-      let inputTensor = tf.tensor2d([[smoothedAngle / 360]]);
+      let inputTensor = tf.tensor2d([[angleInput / 360]]);
       let outputTensor = model.predict(inputTensor);
       prediction = outputTensor.dataSync();
       inputTensor.dispose();
@@ -129,9 +129,9 @@ function draw() {
       noFill();
       ellipse(0, 0, width * 0.5, width * 0.5);
 
-      // Point on circle (using sine and cosine from prediction)
-      let x = prediction[1] * (width * 0.25); // Cosine * radius
-      let y = prediction[0] * (width * 0.25); // Sine * radius
+      // Point on circle
+      let x = prediction[1] * (width * 0.25);
+      let y = prediction[0] * (width * 0.25);
       fill(255, 0, 0);
       ellipse(x, y, 10 * textScale, 10 * textScale);
 
@@ -148,16 +148,20 @@ function draw() {
 
 function handleKeyPress(event) {
   if (event.key === 'ArrowLeft') {
-    angleInput -= 2; // Increased for more noticeable movement
+    angleInput -= 1;
   } else if (event.key === 'ArrowRight') {
-    angleInput += 2;
+    angleInput += 1;
   }
   angleInput = constrain(angleInput, 0, 360);
 }
 
 function touchMoved() {
   let deltaX = mouseX - previousTouchX;
-  angleInput += deltaX * 0.5; // Adjusted sensitivity for smoother movement
+  
+  // Aumentar o reducir la sensibilidad del movimiento
+  angleInput += deltaX * 0.2;  // Ajustado a 0.2 para mayor sensibilidad
+
+  // Asegurarse de que el valor esté limitado
   angleInput = constrain(angleInput, 0, 360);
   previousTouchX = mouseX;
   return false;
