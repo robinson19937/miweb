@@ -30,7 +30,6 @@
 let model;
 let angleInput = 0;
 let prediction = [0, 0, 0];
-let trainingData = [];
 let isTrained = false;
 let previousTouchX = 0;
 let canvas;
@@ -42,63 +41,17 @@ async function setup() {
   canvas.parent('canvas-container');
 
   try {
-    if (localStorage.getItem('mi-modelo')) {
-      model = await tf.loadLayersModel('localstorage://mi-modelo');
-      isTrained = true;
-      loadingModel = false;
-    } else {
-      await trainModel();
-    }
+    // Carga el modelo desde los archivos locales en GitHub Pages
+    model = await tf.loadLayersModel('mi-modelo.json');
+    isTrained = true;
+    loadingModel = false;
   } catch (error) {
-    console.error("Error al cargar o entrenar el modelo:", error);
+    console.error("Error al cargar el modelo:", error);
     isTrained = false;
     loadingModel = false;
   }
 
   window.addEventListener('keydown', handleKeyPress);
-}
-
-async function trainModel() {
-  loadingModel = true;
-  model = tf.sequential();
-  model.add(tf.layers.dense({ units: 64, activation: 'relu', inputShape: [1] }));
-  model.add(tf.layers.dense({ units: 32, activation: 'relu' }));
-  model.add(tf.layers.dense({ units: 3 }));
-  model.compile({ optimizer: 'adam', loss: 'meanSquaredError' });
-
-  trainingData = [];
-  for (let i = 0; i < 1000; i++) {
-    let deg = random(0, 360);
-    let rad = deg * PI / 180;
-    trainingData.push({
-      input: deg / 360,
-      output: [sin(rad), cos(rad), rad]
-    });
-  }
-
-  const xs = tf.tensor2d(trainingData.map(d => [d.input]));
-  const ys = tf.tensor2d(trainingData.map(d => d.output));
-
-  try {
-    await model.fit(xs, ys, {
-      epochs: 100,
-      shuffle: true,
-      callbacks: {
-        onEpochEnd: (epoch, logs) => {
-          console.log(`Epoch ${epoch}: loss = ${logs.loss}`);
-        }
-      }
-    });
-    isTrained = true;
-    loadingModel = false;
-    await model.save('localstorage://mi-modelo');
-  } catch (error) {
-    console.error("Error durante el entrenamiento:", error);
-    loadingModel = false;
-  }
-
-  xs.dispose();
-  ys.dispose();
 }
 
 function draw() {
@@ -183,4 +136,3 @@ function windowResized() {
   </script>
 </body>
 </html>
-
