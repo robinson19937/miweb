@@ -100,8 +100,7 @@ function draw() {
   let fullText = "Piezas blancas: Computador\n" +
                  "Piezas negras: Robinson López\n\n" +
                  "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más.\n\n" +
-                 "En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, representamos una partida en la que pudimos vencer a la computadora. Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
-
+              
   text(fullText, textX, textY, maxWidth);
 }
 
