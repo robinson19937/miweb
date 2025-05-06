@@ -11,8 +11,8 @@ let currentMove = -1;
 let moves = ["e2-e4", "e7-e5", "g1-f3", "b8-c6", "f1-c4", "f8-c5", "d1-h5", "g8-f6", "h5-f7"];
 
 function preload() {
-  whitePieces.push(loadImage('rey_blanco.png'));
-  whitePieces.push(loadImage('reina_blanca.png'));
+  whitePieces.push(loadImage('reina_blanca (1).png'));
+  whitePieces.push(loadImage('reina_blanca (1).png'));
   whitePieces.push(loadImage('alfil_blanco.png'));
   whitePieces.push(loadImage('alfil_blanco.png'));
   whitePieces.push(loadImage('caballo_blanco.png'));
