@@ -2,10 +2,10 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>soluciones tecnologicas</title>
+  <title>Soluciones Tecnológicas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"></script>
-  <script src="sketch.js?v=1.0"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js" defer></script>
+  <script src="sketch.js?v=<?php echo time(); ?>" defer></script>
 
   <style>
     body, html {
@@ -17,7 +17,7 @@
 
     #uploadForm {
       position: absolute;
-      top: 55%; /* ↓ Ajustado para bajar el formulario */
+      top: 55%;
       left: 50%;
       transform: translateX(-50%);
       background: rgba(255, 255, 255, 0.9);
@@ -118,8 +118,6 @@
     <input type="submit" value="Subir">
   </form>
 
- 
-
   <div id="githubLink">
     <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
   </div>
@@ -142,50 +140,8 @@
       })
       .then(response => response.text())
       .then(data => {
-        document.body.innerHTML = `
-          <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.js"><\/script>
-          <script src="sketch.js"><\/script>
-          <div style="
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(255, 255, 255, 0.95);
-            padding: 30px 40px;
-            border-radius: 20px;
-            font-size: 28px;
-            text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            max-width: 90%;
-          ">
-            ✅ Archivo subido exitosamente<br><br>
-            <button onclick='location.reload()' style="
-              margin-top: 20px;
-              font-size: 18px;
-              padding: 15px 20px;
-              width: 90%;
-              max-width: 280px;
-              border: none;
-              border-radius: 12px;
-              background-color: #4CAF50;
-              color: white;
-              font-weight: bold;
-              box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-              cursor: pointer;
-            ">Volver al menú principal</button>
-          </div>
-          <style>
-            @media (prefers-color-scheme: dark) {
-              div {
-                background: rgba(30,30,30,0.95) !important;
-                color: white !important;
-              }
-              button {
-                background-color: #66bb6a !important;
-              }
-            }
-          <\/style>
-        `;
+        alert("✅ Archivo subido exitosamente.");
+        location.reload(); // mejor práctica que modificar todo el body
       })
       .catch(error => {
         console.error('Error:', error);
