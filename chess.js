@@ -1,7 +1,7 @@
 let whitePieces = [];
 let blackPieces = [];
-let whitePowns = [];
-let blackPowns = [];
+let whitePawns = [];
+let blackPawns = [];
 
 let board = []; // 8x8 tablero
 let squareSize;
@@ -31,8 +31,8 @@ function preload() {
   blackPieces.push(loadImage('torre_negra.png'));
 
   for (let i = 0; i < 8; i++) {
-    whitePowns.push(loadImage('peon_blanco.png'));
-    blackPowns.push(loadImage('peon_negro.png'));
+    whitePawns.push(loadImage('peon_blanco.png'));
+    blackPawns.push(loadImage('peon_negro.png'));
   }
 }
 
@@ -94,14 +94,14 @@ function draw() {
   rect(0, 0, width, height - 300); // Ajustar el rectángulo para el tablero
 
   // Configurar el estilo del texto
-  textSize(16);
+  textSize(18); // Texto un poco más grande
   textAlign(LEFT);
   fill(0); // Color negro para el texto
-  textLeading(22); // Espaciado entre líneas
+  textLeading(24); // Espaciado entre líneas ajustado para el tamaño mayor
 
   // Texto solicitado
   let textX = 20;
-  let textY = height - 260; // Comienza justo debajo de los botones
+  let textY = height - 240; // Mover el texto más abajo
   let maxWidth = width - 40; // Margen de 20px a cada lado
 
   let fullText = "Piezas blancas: Computador\n\n" +
@@ -155,7 +155,7 @@ function resetBoardToStart() {
   board[0][7] = { img: blackPieces[7] };
 
   for (let i = 0; i < 8; i++) {
-    board[1][i] = { img: blackPowns[i] };
+    board[1][i] = { img: blackPawns[i] };
   }
 
   board[7][0] = { img: whitePieces[6] };
@@ -168,7 +168,7 @@ function resetBoardToStart() {
   board[7][7] = { img: whitePieces[7] };
 
   for (let i = 0; i < 8; i++) {
-    board[6][i] = { img: whitePowns[i] };
+    board[6][i] = { img: whitePawns[i] };
   }
 }
 
