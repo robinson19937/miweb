@@ -4,7 +4,14 @@ let botonX = 20, botonY = 20, botonW = 180, botonH = 50;
 let infoBoxW = 330, infoBoxH = 240;
 
 function preload() {
-  fondo = loadImage('roblop.png');
+  // Asegúrate de que la ruta sea correcta y esté en HTTPS si se sirve desde la web
+  fondo = loadImage('roblop.png?v=' + Date.now(), 
+    () => console.log("Imagen cargada exitosamente"),
+    (err) => {
+      console.error("Error cargando la imagen:", err);
+      fondo = null;
+    }
+  );
 }
 
 function setup() {
@@ -15,7 +22,16 @@ function setup() {
 
 function draw() {
   background(0);
-  image(fondo, 0, 0, width, height);
+
+  // Verificamos si fondo está cargado correctamente
+  if (fondo) {
+    image(fondo, 0, 0, width, height);
+  } else {
+    fill(100);
+    textAlign(CENTER, CENTER);
+    textSize(24);
+    text("No se pudo cargar la imagen de fondo.", width / 2, height / 2);
+  }
 
   // Botón "Quiénes somos"
   fill(30, 144, 255, 230);
@@ -64,4 +80,3 @@ function mousePressed() {
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
-
