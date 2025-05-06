@@ -3,7 +3,7 @@ let blackPieces = [];
 let whitePawns = [];
 let blackPawns = [];
 
-let board = []; // 8x8 tablero
+let board = [];
 let squareSize;
 let currentMove = -1;
 
@@ -39,14 +39,9 @@ function preload() {
 function setup() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  // Aumentar el alto del lienzo para acomodar el texto
-  let extraHeight = 300; // Espacio para el texto
-  createCanvas(boardSize, boardSize + extraHeight);
+  let extraHeight = 350; // espacio extra para texto y botones
 
-  // Crear y estilizar botones grandes
-  let buttonHeight = 60;
-  let buttonWidth = 180;
-  let spacing = 20;
+  createCanvas(boardSize, boardSize + extraHeight);
 
   prevButton = createButton('⬅️ Anterior');
   nextButton = createButton('➡️ Siguiente');
@@ -54,10 +49,10 @@ function setup() {
   styleButton(prevButton, '#4CAF50');
   styleButton(nextButton, '#2196F3');
 
-  positionButtons();
-
   prevButton.mousePressed(prevMove);
   nextButton.mousePressed(nextMove);
+
+  positionButtons();
 
   resetBoardToStart();
   noLoop();
@@ -78,9 +73,8 @@ function styleButton(button, bgColor) {
 function positionButtons() {
   let spacing = 20;
   let buttonWidth = 180;
-  // Posicionar botones justo debajo del tablero
-  prevButton.position(width / 2 - buttonWidth - spacing, height - 280);
-  nextButton.position(width / 2 + spacing, height - 280);
+  prevButton.position(width / 2 - buttonWidth - spacing, height - 60);
+  nextButton.position(width / 2 + spacing, height - 60);
 }
 
 function draw() {
@@ -88,25 +82,30 @@ function draw() {
   drawBoard(squareSize);
   drawPieces(squareSize);
 
-  // Dibujar el borde rojo
   stroke(255, 0, 0);
   noFill();
-  rect(0, 0, width, height - 300); // Ajustar el rectángulo para el tablero
+  rect(0, 0, width, height - 350);
 
-  // Configurar el estilo del texto
-  textSize(18); // Texto un poco más grande
+  // Texto informativo
+  textSize(18);
   textAlign(LEFT);
-  fill(0); // Color negro para el texto
-  textLeading(24); // Espaciado entre líneas ajustado para el tamaño mayor
+  fill(30); // gris oscuro legible
+  textLeading(26);
 
-  // Texto solicitado
-  let textX = 20;
-  let textY = height - 240; // Mover el texto más abajo
-  let maxWidth = width - 40; // Margen de 20px a cada lado
+  let textX = 30;
+  let textY = height - 300;
+  let maxWidth = width - 60;
 
-  let fullText = "Piezas blancas: Computador\n\n" +
-                 "Piezas negras: Robinson López\n\n" +
-                 "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más. En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, representamos una partida en la que pudimos vencer a la computadora. Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
+  let fullText = 
+    "♟️ Piezas blancas: Computador\n" +
+    "♞ Piezas negras: Robinson López\n\n" +
+    "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes " +
+    "y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. " +
+    "Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, " +
+    "como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más. " +
+    "En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, " +
+    "representamos una partida en la que pudimos vencer a la computadora. " +
+    "Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
 
   text(fullText, textX, textY, maxWidth);
 }
@@ -125,7 +124,7 @@ function drawPieces(size) {
     for (let x = 0; x < 8; x++) {
       let piece = board[y][x];
       if (piece) {
-        drawPiece(piece.img, x, y, size);
+        image(piece.img, x * size, y * size, size, size);
       }
     }
   }
@@ -176,7 +175,6 @@ function applyMove(move) {
   const [from, to] = move.split("-");
   const f = notationToCoord(from);
   const t = notationToCoord(to);
-
   board[t.y][t.x] = board[f.y][f.x];
   board[f.y][f.x] = null;
 }
@@ -203,8 +201,7 @@ function prevMove() {
 function windowResized() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  // Mantener el espacio extra para el texto
-  resizeCanvas(boardSize, boardSize + 300);
+  resizeCanvas(boardSize, boardSize + 350);
   positionButtons();
   redraw();
 }
