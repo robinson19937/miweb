@@ -94,14 +94,14 @@ function draw() {
   rect(0, 0, width, height - 300); // Ajustar el rectángulo para el tablero
 
   // Configurar el estilo del texto
-  textSize(20); // Texto un poco más grande
+  textSize(18); // Texto un poco más grande
   textAlign(LEFT);
   fill(0); // Color negro para el texto
-  textLeading(26); // Espaciado entre líneas ajustado para el tamaño mayor
+  textLeading(24); // Espaciado entre líneas ajustado para el tamaño mayor
 
   // Texto solicitado
   let textX = 20;
-  let textY = height - 220; // Mover el texto más abajo
+  let textY = height - 240; // Mover el texto más abajo
   let maxWidth = width - 40; // Margen de 20px a cada lado
 
   let fullText = "Piezas blancas: Computador\n\n" +
