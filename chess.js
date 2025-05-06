@@ -7,7 +7,8 @@ let board = []; // 8x8 tablero
 let squareSize;
 let currentMove = -1;
 
-// Ejemplo de jugadas (puedes cambiar esto por cualquier partida)
+let prevButton, nextButton;
+
 let moves = ["e2-e4", "e7-e5", "g1-f3", "b8-c6", "f1-c4", "f8-c5", "d1-h5", "g8-f6", "h5-f7"];
 
 function preload() {
@@ -36,37 +37,61 @@ function preload() {
 }
 
 function setup() {
-  // Ajustar el tamaño de la cuadrícula dependiendo del tamaño de la ventana
-  let boardSize = min(windowWidth, windowHeight) * 0.8; // El tablero ocupa el 80% de la ventana
+  let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
 
   createCanvas(boardSize, boardSize);
-  
-  // Crear los botones de navegación
-  let prevButton = createButton('⬅️ Anterior');
-  prevButton.position(20, height + 10);
-  prevButton.mousePressed(prevMove);
 
-  let nextButton = createButton('➡️ Siguiente');
-  nextButton.position(100, height + 10);
+  // Crear y estilizar botones grandes
+  let buttonHeight = 60;
+  let buttonWidth = 180;
+  let spacing = 20;
+
+  prevButton = createButton('⬅️ Anterior');
+  nextButton = createButton('➡️ Siguiente');
+
+  styleButton(prevButton, '#4CAF50');
+  styleButton(nextButton, '#2196F3');
+
+  positionButtons();
+
+  prevButton.mousePressed(prevMove);
   nextButton.mousePressed(nextMove);
 
-  resetBoardToStart(); // Inicializar el tablero con las piezas en su posición inicial
+  resetBoardToStart();
   noLoop();
 }
 
-function draw() {
-  clear(); // Limpiar el lienzo antes de redibujar
-  drawBoard(squareSize); // Dibujar el tablero
-  drawPieces(squareSize); // Dibujar las piezas en sus posiciones
-
-  // Visualización del tamaño del lienzo para comprobar el ajuste
-  stroke(255, 0, 0);
-  noFill();
-  rect(0, 0, width, height); // Dibuja un borde alrededor del canvas
+function styleButton(button, bgColor) {
+  button.style('font-size', '20px');
+  button.style('padding', '15px 25px');
+  button.style('border-radius', '10px');
+  button.style('background-color', bgColor);
+  button.style('color', 'white');
+  button.style('border', 'none');
+  button.style('cursor', 'pointer');
+  button.style('font-weight', 'bold');
+  button.style('box-shadow', '0 4px 10px rgba(0,0,0,0.3)');
 }
 
-// Dibuja el tablero de ajedrez
+function positionButtons() {
+  let spacing = 20;
+  let buttonWidth = 180;
+
+  prevButton.position(width / 2 - buttonWidth - spacing, height + 20);
+  nextButton.position(width / 2 + spacing, height + 20);
+}
+
+function draw() {
+  clear();
+  drawBoard(squareSize);
+  drawPieces(squareSize);
+
+  stroke(255, 0, 0);
+  noFill();
+  rect(0, 0, width, height);
+}
+
 function drawBoard(size) {
   for (let x = 0; x < 8; x++) {
     for (let y = 0; y < 8; y++) {
@@ -76,7 +101,6 @@ function drawBoard(size) {
   }
 }
 
-// Dibuja todas las piezas desde el array 'board'
 function drawPieces(size) {
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
@@ -92,7 +116,6 @@ function drawPiece(img, x, y, size) {
   image(img, x * size, y * size, size, size);
 }
 
-// Convierte "e2" → {x: 4, y: 6}
 function notationToCoord(pos) {
   return {
     x: pos.charCodeAt(0) - 97,
@@ -100,40 +123,36 @@ function notationToCoord(pos) {
   };
 }
 
-// Crea el tablero inicial
 function resetBoardToStart() {
   board = Array(8).fill().map(() => Array(8).fill(null));
 
-  // Piezas negras
-  board[0][0] = { img: blackPieces[6] }; // Rook
-  board[0][1] = { img: blackPieces[4] }; // Knight
-  board[0][2] = { img: blackPieces[2] }; // Bishop
-  board[0][3] = { img: blackPieces[1] }; // Queen
-  board[0][4] = { img: blackPieces[0] }; // King
-  board[0][5] = { img: blackPieces[3] }; // Bishop
-  board[0][6] = { img: blackPieces[5] }; // Knight
-  board[0][7] = { img: blackPieces[7] }; // Rook
+  board[0][0] = { img: blackPieces[6] };
+  board[0][1] = { img: blackPieces[4] };
+  board[0][2] = { img: blackPieces[2] };
+  board[0][3] = { img: blackPieces[1] };
+  board[0][4] = { img: blackPieces[0] };
+  board[0][5] = { img: blackPieces[3] };
+  board[0][6] = { img: blackPieces[5] };
+  board[0][7] = { img: blackPieces[7] };
 
   for (let i = 0; i < 8; i++) {
     board[1][i] = { img: blackPawns[i] };
   }
 
-  // Piezas blancas
-  board[7][0] = { img: whitePieces[6] }; // Rook
-  board[7][1] = { img: whitePieces[4] }; // Knight
-  board[7][2] = { img: whitePieces[2] }; // Bishop
-  board[7][3] = { img: whitePieces[1] }; // Queen
-  board[7][4] = { img: whitePieces[0] }; // King
-  board[7][5] = { img: whitePieces[3] }; // Bishop
-  board[7][6] = { img: whitePieces[5] }; // Knight
-  board[7][7] = { img: whitePieces[7] }; // Rook
+  board[7][0] = { img: whitePieces[6] };
+  board[7][1] = { img: whitePieces[4] };
+  board[7][2] = { img: whitePieces[2] };
+  board[7][3] = { img: whitePieces[1] };
+  board[7][4] = { img: whitePieces[0] };
+  board[7][5] = { img: whitePieces[3] };
+  board[7][6] = { img: whitePieces[5] };
+  board[7][7] = { img: whitePieces[7] };
 
   for (let i = 0; i < 8; i++) {
     board[6][i] = { img: whitePawns[i] };
   }
 }
 
-// Aplica un movimiento como "e2-e4"
 function applyMove(move) {
   const [from, to] = move.split("-");
   const f = notationToCoord(from);
@@ -143,7 +162,6 @@ function applyMove(move) {
   board[f.y][f.x] = null;
 }
 
-// Ir al siguiente movimiento
 function nextMove() {
   if (currentMove < moves.length - 1) {
     currentMove++;
@@ -152,7 +170,6 @@ function nextMove() {
   }
 }
 
-// Volver al movimiento anterior
 function prevMove() {
   if (currentMove >= 0) {
     currentMove--;
@@ -164,10 +181,10 @@ function prevMove() {
   }
 }
 
-// Función que ajusta el tamaño de la cuadrícula cuando el tamaño de la ventana cambia
 function windowResized() {
-  let boardSize = min(windowWidth, windowHeight) * 0.8; // El tablero ocupa el 80% de la ventana
+  let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
   resizeCanvas(boardSize, boardSize);
+  positionButtons();
   redraw();
 }
