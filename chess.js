@@ -39,20 +39,20 @@ function preload() {
 function setup() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  let extraHeight = 350; // espacio extra para texto y botones
-
+  let extraHeight = 320;
   createCanvas(boardSize, boardSize + extraHeight);
 
+  // Crear botones
   prevButton = createButton('⬅️ Anterior');
   nextButton = createButton('➡️ Siguiente');
 
   styleButton(prevButton, '#4CAF50');
   styleButton(nextButton, '#2196F3');
 
+  positionButtons();
+
   prevButton.mousePressed(prevMove);
   nextButton.mousePressed(nextMove);
-
-  positionButtons();
 
   resetBoardToStart();
   noLoop();
@@ -73,8 +73,9 @@ function styleButton(button, bgColor) {
 function positionButtons() {
   let spacing = 20;
   let buttonWidth = 180;
-  prevButton.position(width / 2 - buttonWidth - spacing, height - 60);
-  nextButton.position(width / 2 + spacing, height - 60);
+  let buttonY = height - 40; // más abajo del texto
+  prevButton.position(width / 2 - buttonWidth - spacing, buttonY);
+  nextButton.position(width / 2 + spacing, buttonY);
 }
 
 function draw() {
@@ -84,28 +85,21 @@ function draw() {
 
   stroke(255, 0, 0);
   noFill();
-  rect(0, 0, width, height - 350);
+  rect(0, 0, width, height - 320);
 
   // Texto informativo
-  textSize(18);
+  textSize(20);
   textAlign(LEFT);
-  fill(30); // gris oscuro legible
+  fill(0);
   textLeading(26);
 
-  let textX = 30;
-  let textY = height - 300;
-  let maxWidth = width - 60;
+  let textX = 20;
+  let textY = height - 260;
+  let maxWidth = width - 40;
 
-  let fullText = 
-    "♟️ Piezas blancas: Computador\n" +
-    "♞ Piezas negras: Robinson López\n\n" +
-    "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes " +
-    "y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. " +
-    "Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, " +
-    "como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más. " +
-    "En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, " +
-    "representamos una partida en la que pudimos vencer a la computadora. " +
-    "Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
+  let fullText = "Piezas blancas: Computador\n\n" +
+                 "Piezas negras: Robinson López\n\n" +
+                 "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más. En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, representamos una partida en la que pudimos vencer a la computadora. Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
 
   text(fullText, textX, textY, maxWidth);
 }
@@ -124,7 +118,7 @@ function drawPieces(size) {
     for (let x = 0; x < 8; x++) {
       let piece = board[y][x];
       if (piece) {
-        image(piece.img, x * size, y * size, size, size);
+        drawPiece(piece.img, x, y, size);
       }
     }
   }
@@ -175,6 +169,7 @@ function applyMove(move) {
   const [from, to] = move.split("-");
   const f = notationToCoord(from);
   const t = notationToCoord(to);
+
   board[t.y][t.x] = board[f.y][f.x];
   board[f.y][f.x] = null;
 }
@@ -201,7 +196,7 @@ function prevMove() {
 function windowResized() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  resizeCanvas(boardSize, boardSize + 350);
+  resizeCanvas(boardSize, boardSize + 320);
   positionButtons();
   redraw();
 }
