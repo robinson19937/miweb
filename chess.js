@@ -1,7 +1,7 @@
 let whitePieces = [];
 let blackPieces = [];
-let whitePawns = [];
-let blackPawns = [];
+let whitePowns = [];
+let blackPowns = [];
 
 let board = []; // 8x8 tablero
 let squareSize;
@@ -31,16 +31,17 @@ function preload() {
   blackPieces.push(loadImage('torre_negra.png'));
 
   for (let i = 0; i < 8; i++) {
-    whitePawns.push(loadImage('peon_blanco.png'));
-    blackPawns.push(loadImage('peon_negro.png'));
+    whitePowns.push(loadImage('peon_blanco.png'));
+    blackPowns.push(loadImage('peon_negro.png'));
   }
 }
 
 function setup() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-
-  createCanvas(boardSize, boardSize);
+  // Aumentar el alto del lienzo para acomodar el texto
+  let extraHeight = 300; // Espacio para el texto
+  createCanvas(boardSize, boardSize + extraHeight);
 
   // Crear y estilizar botones grandes
   let buttonHeight = 60;
@@ -77,9 +78,9 @@ function styleButton(button, bgColor) {
 function positionButtons() {
   let spacing = 20;
   let buttonWidth = 180;
-
-  prevButton.position(width / 2 - buttonWidth - spacing, height + 20);
-  nextButton.position(width / 2 + spacing, height + 20);
+  // Posicionar botones justo debajo del tablero
+  prevButton.position(width / 2 - buttonWidth - spacing, height - 280);
+  nextButton.position(width / 2 + spacing, height - 280);
 }
 
 function draw() {
@@ -87,9 +88,27 @@ function draw() {
   drawBoard(squareSize);
   drawPieces(squareSize);
 
+  // Dibujar el borde rojo
   stroke(255, 0, 0);
   noFill();
-  rect(0, 0, width, height);
+  rect(0, 0, width, height - 300); // Ajustar el rectángulo para el tablero
+
+  // Configurar el estilo del texto
+  textSize(16);
+  textAlign(LEFT);
+  fill(0); // Color negro para el texto
+  textLeading(22); // Espaciado entre líneas
+
+  // Texto solicitado
+  let textX = 20;
+  let textY = height - 260; // Comienza justo debajo de los botones
+  let maxWidth = width - 40; // Margen de 20px a cada lado
+
+  let fullText = "Piezas blancas: Computador\n\n" +
+                 "Piezas negras: Robinson López\n\n" +
+                 "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más. En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, representamos una partida en la que pudimos vencer a la computadora. Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
+
+  text(fullText, textX, textY, maxWidth);
 }
 
 function drawBoard(size) {
@@ -136,7 +155,7 @@ function resetBoardToStart() {
   board[0][7] = { img: blackPieces[7] };
 
   for (let i = 0; i < 8; i++) {
-    board[1][i] = { img: blackPawns[i] };
+    board[1][i] = { img: blackPowns[i] };
   }
 
   board[7][0] = { img: whitePieces[6] };
@@ -149,7 +168,7 @@ function resetBoardToStart() {
   board[7][7] = { img: whitePieces[7] };
 
   for (let i = 0; i < 8; i++) {
-    board[6][i] = { img: whitePawns[i] };
+    board[6][i] = { img: whitePowns[i] };
   }
 }
 
@@ -184,7 +203,8 @@ function prevMove() {
 function windowResized() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  resizeCanvas(boardSize, boardSize);
+  // Mantener el espacio extra para el texto
+  resizeCanvas(boardSize, boardSize + 300);
   positionButtons();
   redraw();
 }
