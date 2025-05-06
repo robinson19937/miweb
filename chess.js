@@ -39,7 +39,7 @@ function preload() {
 function setup() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  let extraHeight = 320;
+  let extraHeight = 400; // Increased to accommodate text and buttons
   createCanvas(boardSize, boardSize + extraHeight);
 
   // Crear botones
@@ -59,21 +59,21 @@ function setup() {
 }
 
 function styleButton(button, bgColor) {
-  button.style('font-size', '20px');
-  button.style('padding', '15px 25px');
-  button.style('border-radius', '10px');
+  button.style('font-size', '18px');
+  button.style('padding', '12px 20px');
+  button.style('border-radius', '8px');
   button.style('background-color', bgColor);
   button.style('color', 'white');
   button.style('border', 'none');
   button.style('cursor', 'pointer');
   button.style('font-weight', 'bold');
-  button.style('box-shadow', '0 4px 10px rgba(0,0,0,0.3)');
+  button.style('box-shadow', '0 3px 8px rgba(0,0,0,0.2)');
 }
 
 function positionButtons() {
   let spacing = 20;
-  let buttonWidth = 180;
-  let buttonY = height - 40; // más abajo del texto
+  let buttonWidth = 150;
+  let buttonY = height - 80; // Positioned below text
   prevButton.position(width / 2 - buttonWidth - spacing, buttonY);
   nextButton.position(width / 2 + spacing, buttonY);
 }
@@ -85,21 +85,22 @@ function draw() {
 
   stroke(255, 0, 0);
   noFill();
-  rect(0, 0, width, height - 320);
+  rect(0, 0, width, height - 400);
 
   // Texto informativo
-  textSize(20);
+  textSize(18);
   textAlign(LEFT);
   fill(0);
-  textLeading(26);
+  textLeading(24);
 
   let textX = 20;
-  let textY = height - 260;
+  let textY = height - 320; // Adjusted for better spacing
   let maxWidth = width - 40;
 
-  let fullText = "Piezas blancas: Computador" +
-                 "Piezas negras: Robinson López" +
-                 "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más. En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, representamos una partida en la que pudimos vencer a la computadora. Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
+  let fullText = "Piezas blancas: Computador\n" +
+                 "Piezas negras: Robinson López\n\n" +
+                 "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más.\n\n" +
+                 "En el juego de arriba que podemos ver moviendo los botones hacia adelante o hacia atrás para mover las jugadas, representamos una partida en la que pudimos vencer a la computadora. Este proyecto muestra que un sistema computacional puede estar sujeto a errores y que el razonamiento humano siempre prevalece.";
 
   text(fullText, textX, textY, maxWidth);
 }
@@ -196,7 +197,7 @@ function prevMove() {
 function windowResized() {
   let boardSize = min(windowWidth, windowHeight) * 0.8;
   squareSize = boardSize / 8;
-  resizeCanvas(boardSize, boardSize + 320);
+  resizeCanvas(boardSize, boardSize + 400);
   positionButtons();
   redraw();
 }
