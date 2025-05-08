@@ -1,15 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <script src="https://cdn.jsdelivr.net/npm/p5@1.11.5/lib/p5.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.11.3/addons/p5.sound.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <meta charset="utf-8" />
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ejemplo de uso de matrices</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      height: 100vh;
+      background: #f0f0f0;
+      font-family: sans-serif;
+    }
 
-  </head>
-  <body>
-    <main>
-    </main>
-    <script src="chess.js"></script>
-  </body>
+    main {
+      margin-top: 20px;
+      transform: scale(1);
+      transform-origin: top center;
+    }
+
+    @media (max-width: 480px) {
+      main {
+        transform: scale(0.9);
+      }
+    }
+
+    canvas {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <!-- Aquí se inserta el canvas de p5.js automáticamente -->
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.0/p5.min.js"></script>
+  <script src="chess.js"></script>
+</body>
 </html>
