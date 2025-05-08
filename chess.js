@@ -24,8 +24,8 @@ let moves = [
 
 function preload() {
   // Load white pieces: king, queen, bishop, bishop, knight, knight, rook, rook
-  whitePieces.push(loadImage('rey_blanco.png'));
-  whitePieces.push(loadImage('reina_blanca.png'));
+  whitePieces.push(loadImage('rey_blanco (1).png'));
+  whitePieces.push(loadImage('reina_blanca (1).png'));
   whitePieces.push(loadImage('alfil_blanco.png'));
   whitePieces.push(loadImage('alfil_blanco.png'));
   whitePieces.push(loadImage('caballo_blanco.png'));
