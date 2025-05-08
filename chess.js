@@ -9,17 +9,14 @@ let currentMove = -1;
 let prevButton, nextButton;
 
 let moves = [
-  [[1, 4], [3, 4]],
-  [[6, 4], [4, 4]],
-  [[1, 6], [2, 5]],
-  [[6, 1], [5, 2]],
-  [[1, 5], [4, 2]],
-  [[6, 5], [4, 2]],
-  [[1, 3], [4, 7]],
-  [[6, 6], [5, 5]],
-  [[4, 7], [6, 5]]
+  [[6, 4], [4, 4]], // e2-e4
+  [[1, 4], [3, 4]], // e7-e5
+  [[7, 3], [3, 7]], // d1-h5
+  [[0, 1], [2, 2]], // b8-c6
+  [[7, 5], [4, 2]], // f1-c4
+  [[0, 6], [2, 5]], // g8-f6
+  [[3, 7], [1, 5]]  // h5xf7 (jaque mate)
 ];
-
 function preload() {
   // Piezas blancas: rey, reina, alfiles, caballos, torres
   whitePieces.push(loadImage('rey_blanco (1).png'));
