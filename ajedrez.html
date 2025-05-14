@@ -5,68 +5,51 @@
   <title>Ajedrez con Stockfish</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #f4f4f4;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
       text-align: center;
-      margin: 0;
       padding: 20px;
     }
-
     .descripcion {
-      max-width: 700px;
-      margin: auto;
-      background: white;
+      background: #fff;
       padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      margin-bottom: 30px;
-      text-align: left;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
-
-    #board {
-      display: grid;
-      grid-template-columns: repeat(8, 60px);
-      grid-template-rows: repeat(8, 60px);
-      width: 480px;
+    table {
+      border-collapse: collapse;
       margin: 0 auto;
-      border: 2px solid #333;
     }
-
-    .square {
+    td {
       width: 60px;
       height: 60px;
-      line-height: 60px;
-      font-size: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 40px;
       cursor: pointer;
-      user-select: none;
     }
-
     .white {
-      background-color: #eee;
+      background-color: #f0d9b5;
     }
-
     .black {
-      background-color: #888;
-      color: white;
+      background-color: #b58863;
     }
-
-    #status {
-      margin-top: 15px;
-      font-size: 18px;
+    .controls {
+      margin: 15px;
     }
-
-    .controls button {
-      margin: 10px 5px;
-      padding: 10px 20px;
+    button {
+      padding: 10px 15px;
+      margin: 5px;
       font-size: 16px;
       cursor: pointer;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
+    }
+    #status {
+      margin-top: 15px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -84,57 +67,59 @@
     <button onclick="resetGame()">Reiniciar</button>
   </div>
 
-  <div id="board"></div>
-  <div id="status">Selecciona un color para comenzar</div>
+  <table id="chessboard"></table>
+  <div id="status">Tu turno (Blancas)</div>
 
+  <!-- Librerías necesarias -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/stockfish@15.1.0/stockfish.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/stockfish/stockfish.wasm.js"></script>
+
   <script>
-    const boardElement = document.getElementById("board");
-    const statusElement = document.getElementById("status");
-    const pieceUnicode = {
-      'p': '♟', 'r': '♜', 'n': '♞', 'b': '♝', 'q': '♛', 'k': '♚',
-      'P': '♙', 'R': '♖', 'N': '♘', 'B': '♗', 'Q': '♕', 'K': '♔'
+    const PIECES = {
+      p: '♟', r: '♜', n: '♞', b: '♝', q: '♛', k: '♚',
+      P: '♙', R: '♖', N: '♘', B: '♗', Q: '♕', K: '♔'
     };
 
-    let game = new Chess();
+    const game = new Chess();
     let engine = Stockfish();
-    let selected = null;
-    let playingAs = 'w';
+    let playerColor = 'w';
+    let selectedSquare = null;
 
-    function drawBoard() {
-      boardElement.innerHTML = '';
-      const board = game.board();
-      for (let i = 0; i < 8; i++) {
-        for (let j = 0; j < 8; j++) {
-          const square = document.createElement("div");
-          const isWhite = (i + j) % 2 === 0;
-          square.className = `square ${isWhite ? 'white' : 'black'}`;
-          square.dataset.row = i;
-          square.dataset.col = j;
-          const piece = board[i][j];
-          if (piece) square.textContent = pieceUnicode[piece.color === 'w' ? piece.type.toUpperCase() : piece.type];
-          square.onclick = () => handleClick(i, j);
-          boardElement.appendChild(square);
-        }
+    engine.onmessage = function (event) {
+      const line = typeof event === "object" ? event.data : event;
+      if (line.startsWith("bestmove")) {
+        const move = line.split(" ")[1];
+        game.move({ from: move.slice(0,2), to: move.slice(2,4), promotion: 'q' });
+        renderBoard();
+        updateStatus();
+      }
+    };
+
+    function startGame(color) {
+      playerColor = color;
+      resetGame();
+      if (playerColor === 'b') {
+        setTimeout(makeEngineMove, 300);
       }
     }
 
-    function handleClick(row, col) {
-      const square = String.fromCharCode(97 + col) + (8 - row);
-      const piece = game.get(square);
-      if (selected) {
-        const move = game.move({ from: selected, to: square, promotion: 'q' });
-        selected = null;
-        if (move) {
-          drawBoard();
-          updateStatus();
-          if (game.turn() !== playingAs && !game.game_over()) {
-            setTimeout(makeEngineMove, 200);
-          }
+    function resetGame() {
+      game.reset();
+      renderBoard();
+      updateStatus();
+    }
+
+    function updateStatus() {
+      const status = document.getElementById("status");
+      if (game.in_checkmate()) {
+        status.textContent = '¡Jaque mate!';
+      } else if (game.in_draw()) {
+        status.textContent = '¡Empate!';
+      } else {
+        status.textContent = (game.turn() === playerColor) ? 'Tu turno (' + (playerColor === 'w' ? 'Blancas' : 'Negras') + ')' : 'Pensando...';
+        if (game.turn() !== playerColor) {
+          setTimeout(makeEngineMove, 300);
         }
-      } else if (piece && piece.color === playingAs) {
-        selected = square;
       }
     }
 
@@ -143,40 +128,50 @@
       engine.postMessage("go depth 15");
     }
 
-    engine.onmessage = function(event) {
-      const line = typeof event === "object" ? event.data : event;
-      if (line.startsWith("bestmove")) {
-        const move = line.split(" ")[1];
-        game.move({ from: move.substring(0, 2), to: move.substring(2, 4), promotion: 'q' });
-        drawBoard();
-        updateStatus();
-      }
-    };
+    function renderBoard() {
+      const board = document.getElementById("chessboard");
+      board.innerHTML = '';
+      const position = game.board();
+      const rows = playerColor === 'w' ? position : [...position].reverse();
 
-    function updateStatus() {
-      if (game.in_checkmate()) {
-        statusElement.textContent = '¡Jaque mate!';
-      } else if (game.in_draw()) {
-        statusElement.textContent = '¡Empate!';
+      for (let i = 0; i < 8; i++) {
+        const row = document.createElement("tr");
+        const cols = playerColor === 'w' ? [...Array(8).keys()] : [...Array(8).keys()].reverse();
+        for (let j of cols) {
+          const cell = document.createElement("td");
+          const square = playerColor === 'w'
+            ? String.fromCharCode(97 + j) + (8 - i)
+            : String.fromCharCode(97 + j) + (i + 1);
+
+          cell.className = (i + j) % 2 === 0 ? 'white' : 'black';
+          const piece = position[i][j];
+          cell.textContent = piece ? PIECES[piece.color === 'w' ? piece.type.toUpperCase() : piece.type] : '';
+          cell.onclick = () => handleCellClick(square);
+          row.appendChild(cell);
+        }
+        board.appendChild(row);
+      }
+    }
+
+    function handleCellClick(square) {
+      if (game.turn() !== playerColor) return;
+
+      if (!selectedSquare) {
+        const moves = game.moves({ square, verbose: true });
+        if (moves.length > 0) {
+          selectedSquare = square;
+        }
       } else {
-        statusElement.textContent = game.turn() === playingAs ? 'Tu turno (' + (playingAs === 'w' ? 'Blancas' : 'Negras') + ')' : 'Pensando...';
+        const move = game.move({ from: selectedSquare, to: square, promotion: 'q' });
+        selectedSquare = null;
+        if (move) {
+          renderBoard();
+          updateStatus();
+        }
       }
     }
 
-    function startGame(color) {
-      playingAs = color;
-      game.reset();
-      drawBoard();
-      updateStatus();
-      if (playingAs === 'b') makeEngineMove();
-    }
-
-    function resetGame() {
-      selected = null;
-      game.reset();
-      drawBoard();
-      statusElement.textContent = 'Selecciona un color para comenzar';
-    }
+    resetGame();
   </script>
 </body>
 </html>
