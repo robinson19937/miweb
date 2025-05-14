@@ -157,21 +157,23 @@
     function startNewGame(color) {
       playerColor = color;
       game = new Chess();
-      board.destroy();
+      document.getElementById('board').innerHTML = ''; // Limpiar tablero viejo
       initBoard();
       updateStatus();
       if (playerColor === 'b') {
-        setTimeout(makeEngineMove, 500);
+        setTimeout(makeEngineMove, 500); // Stockfish juega primero
       }
     }
 
     function resetGame() {
-      startNewGame(playerColor);
+      startNewGame(playerColor); // Mantiene color actual
     }
 
-    // Inicializar
-    initBoard();
-    updateStatus();
+    // Iniciar una partida por defecto (como blancas)
+    $(document).ready(function () {
+      initBoard();
+      updateStatus();
+    });
   </script>
 </body>
 </html>
