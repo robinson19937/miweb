@@ -2,18 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>motores neuronales</title>
+  <title>Ajedrez con Stockfish</title>
   <style>
     body {
       font-family: sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 30px;
+      margin: 20px;
     }
 
     .descripcion {
-      max-width: 600px;
+      max-width: 700px;
       margin-bottom: 20px;
     }
 
@@ -21,7 +21,8 @@
       display: grid;
       grid-template-columns: repeat(8, 60px);
       grid-template-rows: repeat(8, 60px);
-      border: 2px solid #333;
+      border: 3px solid #333;
+      margin: 20px 0;
     }
 
     .square {
@@ -30,9 +31,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px;
-      cursor: pointer;
-      user-select: none;
+      font-size: 36px;
+      box-sizing: border-box;
     }
 
     .white {
@@ -44,18 +44,16 @@
     }
 
     #status {
-      margin-top: 15px;
       font-size: 18px;
+      margin-top: 10px;
     }
 
-    button {
-      margin: 10px;
-      padding: 8px 16px;
+    .square.selected {
+      outline: 3px solid red;
     }
   </style>
 </head>
 <body>
-
   <div class="descripcion">
     <p>Existen redes neuronales y motores de ajedrez ya entrenados que están disponibles en línea. Estos motores han sido desarrollados y afinados durante años, y pueden ser reutilizados en nuestros propios proyectos gracias a que muchos son de código abierto y están accesibles desde la web.</p>
     <p>En este caso, utilizamos un motor de ajedrez ya entrenado llamado <strong>Stockfish</strong>, uno de los más potentes del mundo. Optamos por usar un motor ya entrenado porque crear y entrenar una red neuronal que comprenda bien el ajedrez requeriría una enorme cantidad de tiempo, datos y poder computacional.</p>
@@ -65,7 +63,7 @@
   <div id="board"></div>
   <div id="status">Tu turno (Blancas)</div>
 
-  <!-- Dependencias -->
+  <!-- Bibliotecas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/stockfish@15.1.0/stockfish.min.js"></script>
 
@@ -104,16 +102,14 @@
       const square = e.currentTarget.dataset.square;
       if (!selectedSquare) {
         selectedSquare = square;
-        e.currentTarget.style.outline = '2px solid red';
+        e.currentTarget.classList.add('selected');
       } else {
         const move = game.move({
           from: selectedSquare,
           to: square,
           promotion: 'q'
         });
-
         clearSelection();
-
         if (move === null) return;
         renderBoard();
         updateStatus();
@@ -123,7 +119,7 @@
 
     function clearSelection() {
       selectedSquare = null;
-      document.querySelectorAll('.square').forEach(sq => sq.style.outline = 'none');
+      document.querySelectorAll('.square').forEach(sq => sq.classList.remove('selected'));
     }
 
     function updateStatus() {
