@@ -1,111 +1,35 @@
-let whitePieces = [];
-let blackPieces = [];
-let whitePawns = [];
-let blackPawns = [];
+const tileSize = 80; // Tamaño de cada casilla
+let board = []; // Matriz para representar las piezas
+let selected = null; // casilla seleccionada
+let engine;
 
-let board = [];
-let squareSize = 40; // 320 / 8
-let currentMove = -1;
-let prevButton, nextButton;
-
-let moves = [
-  [[6, 4], [4, 4]], // e2-e4
-  [[1, 4], [3, 4]], // e7-e5
-  [[7, 3], [3, 7]], // d1-h5
-  [[0, 1], [2, 2]], // b8-c6
-  [[7, 5], [4, 2]], // f1-c4
-  [[0, 6], [2, 5]], // g8-f6
-  [[3, 7], [1, 5]]  // h5xf7 (jaque mate)
-];
-function preload() {
-  // Piezas blancas: rey, reina, alfiles, caballos, torres
-  whitePieces.push(loadImage('rey_blanco (1).png'));
-  whitePieces.push(loadImage('reina_blanca (1).png'));
-  whitePieces.push(loadImage('alfil_blanco.png'));
-  whitePieces.push(loadImage('alfil_blanco.png'));
-  whitePieces.push(loadImage('caballo_blanco.png'));
-  whitePieces.push(loadImage('caballo_blanco.png'));
-  whitePieces.push(loadImage('torre_blanca.png'));
-  whitePieces.push(loadImage('torre_blanca.png'));
-
-  // Piezas negras
-  blackPieces.push(loadImage('rey_negro.png'));
-  blackPieces.push(loadImage('reina_negra.png'));
-  blackPieces.push(loadImage('alfil_negro.png'));
-  blackPieces.push(loadImage('alfil_negro.png'));
-  blackPieces.push(loadImage('caballo_negro.png'));
-  blackPieces.push(loadImage('caballo_negro.png'));
-  blackPieces.push(loadImage('torre_negra.png'));
-  blackPieces.push(loadImage('torre_negra.png'));
-
-  // Peones
-  for (let i = 0; i < 8; i++) {
-    whitePawns.push(loadImage('peon_blanco.png'));
-    blackPawns.push(loadImage('peon_negro.png'));
-  }
-}
+// Piezas en notación Unicode
+const pieces = {
+  r: '♜', n: '♞', b: '♝', q: '♛', k: '♚', p: '♟', // negras
+  R: '♖', N: '♘', B: '♗', Q: '♕', K: '♔', P: '♙'  // blancas
+};
 
 function setup() {
-  createCanvas(320, 720); // 320 para el tablero, 400 para texto/botones
-  prevButton = createButton('⬅️ Anterior');
-  nextButton = createButton('➡️ Siguiente');
-  styleButton(prevButton, '#4CAF50');
-  styleButton(nextButton, '#2196F3');
-  positionButtons();
-  prevButton.mousePressed(prevMove);
-  nextButton.mousePressed(nextMove);
-  resetBoard();
-  noLoop();
-}
-
-function styleButton(button, bgColor) {
-  button.style('font-size', '18px');
-  button.style('padding', '12px 20px');
-  button.style('border-radius', '8px');
-  button.style('background-color', bgColor);
-  button.style('color', 'white');
-  button.style('border', 'none');
-  button.style('cursor', 'pointer');
-  button.style('font-weight', 'bold');
-  button.style('box-shadow', '0 3px 8px rgba(0,0,0,0.2)');
-}
-
-function positionButtons() {
-  let spacing = 10;
-  let buttonY = height - 80;
-  prevButton.position(width / 2 - 160, buttonY);
-  nextButton.position(width / 2 + 10, buttonY);
+  createCanvas(8 * tileSize, 8 * tileSize);
+  textAlign(CENTER, CENTER);
+  textSize(tileSize * 0.6);
+  setupBoard();
+  initStockfish();
 }
 
 function draw() {
-  clear();
+  background(255);
   drawBoard();
+  highlightSelected();
   drawPieces();
-
-  // Borde rojo
-  stroke(255, 0, 0);
-  noFill();
-  rect(0, 0, width, 320); // solo sobre el tablero
-
-  // Texto informativo
-  textSize(18);
-  textAlign(LEFT);
-  fill(0);
-  textLeading(24);
-  let textX = 20;
-  let textY = 360;
-  let maxWidth = width - 40;
-  let textContent = "Piezas blancas: Computador\n" +
-                   "Piezas negras: Robinson López\n\n" +
-                   "Desde muy niño me interesé por el juego de ajedrez, todavía recuerdo esos días en esas clases con el instituto de deportes y la actividad competitiva en un mundo genial, donde se lograron varias hazañas en esta disciplina. Pienso que debería ser una materia obligada en las instituciones, en el ajedrez podemos encontrar varios conceptos, como probabilidad, lógica, álgebra y notación, razonamiento espacial, patrones y muchas cosas más.";
-  text(textContent, textX, textY, maxWidth);
 }
 
 function drawBoard() {
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
-      fill((row + col) % 2 === 0 ? 255 : 0);
-      square(col * squareSize, row * squareSize, squareSize);
+      let isLight = (row + col) % 2 === 0;
+      fill(isLight ? '#f0d9b5' : '#b58863');
+      rect(col * tileSize, row * tileSize, tileSize, tileSize);
     }
   }
 }
@@ -113,52 +37,146 @@ function drawBoard() {
 function drawPieces() {
   for (let row = 0; row < 8; row++) {
     for (let col = 0; col < 8; col++) {
-      if (board[row][col]) {
-        image(board[row][col], col * squareSize, row * squareSize, squareSize, squareSize);
+      let piece = board[row][col];
+      if (piece !== '') {
+        fill(isUpperCase(piece) ? 0 : 255); // blancas negras
+        text(pieces[piece], col * tileSize + tileSize / 2, row * tileSize + tileSize / 2);
       }
     }
   }
 }
 
-function resetBoard() {
-  board = Array(8).fill().map(() => Array(8).fill(null));
-
-  // Piezas negras
-  board[0] = [
-    blackPieces[6], blackPieces[4], blackPieces[2], blackPieces[1],
-    blackPieces[0], blackPieces[3], blackPieces[5], blackPieces[7]
-  ];
-  board[1] = blackPawns.slice();
-
-  // Piezas blancas
-  board[7] = [
-    whitePieces[6], whitePieces[4], whitePieces[2], whitePieces[1],
-    whitePieces[0], whitePieces[3], whitePieces[5], whitePieces[7]
-  ];
-  board[6] = whitePawns.slice();
-}
-
-function applyMove(move) {
-  let [[fromRow, fromCol], [toRow, toCol]] = move;
-  board[toRow][toCol] = board[fromRow][fromCol];
-  board[fromRow][fromCol] = null;
-}
-
-function nextMove() {
-  if (currentMove < moves.length - 1) {
-    currentMove++;
-    applyMove(moves[currentMove]);
-    redraw();
+function highlightSelected() {
+  if (selected) {
+    fill(255, 255, 0, 150); // Amarillo transparente
+    rect(selected.col * tileSize, selected.row * tileSize, tileSize, tileSize);
   }
 }
 
-function prevMove() {
-  if (currentMove >= 0) {
-    currentMove--;
-    resetBoard();
-    for (let i = 0; i <= currentMove; i++) {
-      applyMove(moves[i]);
+function setupBoard() {
+  board = [
+    ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
+    ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['', '', '', '', '', '', '', ''],
+    ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
+    ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
+  ];
+}
+
+function isUpperCase(char) {
+  return char === char.toUpperCase();
+}
+
+function mousePressed() {
+  const col = floor(mouseX / tileSize);
+  const row = floor(mouseY / tileSize);
+
+  if (col < 0 || col >= 8 || row < 0 || row >= 8) return; // fuera del tablero
+
+  let clickedPiece = board[row][col];
+
+  if (selected) {
+    // Si ya hay una selección, intentamos mover la pieza
+    const from = selected;
+    const to = { row, col };
+    movePiece(from, to);
+    selected = null;
+  } else if (clickedPiece !== '') {
+    // Seleccionamos la pieza si hay algo en la casilla
+    selected = { row, col };
+  }
+}
+
+async function movePiece(from, to) {
+  const piece = board[from.row][from.col];
+  const moveStr =
+    String.fromCharCode(97 + from.col) + (8 - from.row) +
+    String.fromCharCode(97 + to.col) + (8 - to.row);
+  
+  const legalMoves = await getLegalMoves();
+  
+  if (legalMoves.includes(moveStr)) {
+    board[to.row][to.col] = piece;
+    board[from.row][from.col] = '';
+    selected = null;
+    makeAIMove(); // Hacer que la IA juegue después del movimiento del jugador
+  } else {
+    console.log('Movimiento no válido');
+  }
+}
+
+function getLegalMoves() {
+  const fenStr = boardToFEN();
+  sendCmd('ucinewgame');
+  sendCmd('position fen ' + fenStr);
+  sendCmd('d');
+
+  return new Promise((resolve) => {
+    engine.onmessage = function(event) {
+      const msg = event.data;
+      if (msg.startsWith('legalmoves')) {
+        const moves = msg.split(' ')[1].split(',');
+        resolve(moves);
+      }
+    };
+  });
+}
+
+function boardToFEN() {
+  let fen = '';
+  for (let row = 0; row < 8; row++) {
+    let empty = 0;
+    for (let col = 0; col < 8; col++) {
+      let piece = board[row][col];
+      if (piece === '') {
+        empty++;
+      } else {
+        if (empty > 0) {
+          fen += empty;
+          empty = 0;
+        }
+        fen += piece;
+      }
     }
-    redraw();
+    if (empty > 0) fen += empty;
+    if (row < 7) fen += '/';
   }
+  fen += ' w - - 0 1';
+  return fen;
+}
+
+function makeAIMove() {
+  const fenStr = boardToFEN();
+  sendCmd('ucinewgame');
+  sendCmd('position fen ' + fenStr);
+  sendCmd('go depth 3'); // Profundidad de la búsqueda de Stockfish
+
+  engine.onmessage = function(event) {
+    const msg = event.data;
+    if (msg.startsWith('bestmove')) {
+      const bestMove = msg.split(' ')[1];
+      const fromCol = bestMove.charCodeAt(0) - 97; // e.g., 'e' -> 4
+      const fromRow = 8 - parseInt(bestMove[1]); // '2' -> 6
+      const toCol = bestMove.charCodeAt(2) - 97; // e.g., 'e' -> 4
+      const toRow = 8 - parseInt(bestMove[3]); // '4' -> 4
+
+      const piece = board[fromRow][fromCol];
+      board[toRow][toCol] = piece;
+      board[fromRow][fromCol] = '';
+    }
+  };
+}
+
+function initStockfish() {
+  engine = new Worker('https://cdn.jsdelivr.net/gh/lichess-org/stockfish.wasm@v0.13.0/stockfish.js');
+  engine.onmessage = (event) => {
+    console.log('Stockfish:', event.data);
+  };
+}
+
+function sendCmd(cmd) {
+  engine.postMessage(cmd);
 }
