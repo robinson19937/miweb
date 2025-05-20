@@ -1,63 +1,88 @@
 let boardSize = 480;
 let tileSize = boardSize / 8;
 let selected = null;
-
-let pieces = [
-  ['♜','♞','♝','♛','♚','♝','♞','♜'],
-  ['♟','♟','♟','♟','♟','♟','♟','♟'],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['','','','','','','',''],
-  ['♙','♙','♙','♙','♙','♙','♙','♙'],
-  ['♖','♘','♗','♕','♔','♗','♘','♖']
-];
+let board = [];
+let pieceSymbols = {
+  p: "♟", r: "♜", n: "♞", b: "♝", q: "♛", k: "♚",
+  P: "♙", R: "♖", N: "♘", B: "♗", Q: "♕", K: "♔"
+};
 
 function setup() {
   let canvas = createCanvas(boardSize, boardSize);
   canvas.parent("board-canvas");
-  textAlign(CENTER, CENTER);
-  textSize(tileSize * 0.7);
+  loadPositionFromFEN();
+}
+
+function draw() {
+  background(255);
   drawBoard();
+  drawPieces();
 }
 
 function drawBoard() {
-  background(255);
   for (let y = 0; y < 8; y++) {
     for (let x = 0; x < 8; x++) {
-      fill((x + y) % 2 === 0 ? 240 : 100);
+      if ((x + y) % 2 === 0) fill(240);
+      else fill(100);
       rect(x * tileSize, y * tileSize, tileSize, tileSize);
 
       if (selected && selected.x === x && selected.y === y) {
-        fill(255, 255, 0, 150);  // casilla seleccionada
+        noFill();
+        stroke(255, 0, 0);
+        strokeWeight(3);
         rect(x * tileSize, y * tileSize, tileSize, tileSize);
+        noStroke();
       }
+    }
+  }
+}
 
-      let piece = pieces[y][x];
-      if (piece) {
-        fill(piece === piece.toUpperCase() ? 0 : 0);  // color de texto (negro)
-        text(piece, x * tileSize + tileSize / 2, y * tileSize + tileSize / 2);
+function drawPieces() {
+  textAlign(CENTER, CENTER);
+  textSize(tileSize * 0.8);
+  for (let y = 0; y < 8; y++) {
+    for (let x = 0; x < 8; x++) {
+      let piece = board[y][x];
+      if (piece !== "") {
+        fill(piece === piece.toUpperCase() ? 0 : 255);
+        text(pieceSymbols[piece], x * tileSize + tileSize / 2, y * tileSize + tileSize / 2);
       }
     }
   }
 }
 
 function mousePressed() {
-  let x = Math.floor(mouseX / tileSize);
-  let y = Math.floor(mouseY / tileSize);
+  let x = floor(mouseX / tileSize);
+  let y = floor(mouseY / tileSize);
 
   if (x < 0 || x > 7 || y < 0 || y > 7) return;
 
-  if (selected) {
-    // Mover la pieza
-    pieces[y][x] = pieces[selected.y][selected.x];
-    pieces[selected.y][selected.x] = '';
-    selected = null;
-  } else if (pieces[y][x] !== '') {
-    selected = { x, y };
-  }
+  if (!selected) {
+    if (board[y][x] !== "") {
+      selected = { x, y };
+    }
+  } else {
+    let move = {
+      from: { x: selected.x, y: selected.y },
+      to: { x, y }
+    };
 
-  drawBoard();
+    const moveUCI = toUCI(move);
+    fetch("/move", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ move: moveUCI })
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        loadPositionFromFEN(data.fen);
+      } else {
+        alert("Movimiento ilegal");
+      }
+    });
+    selected = null;
+  }
 }
 
 function chooseColor(color) {
@@ -69,21 +94,48 @@ function chooseColor(color) {
 }
 
 function restartGame() {
-  fetch('/restart', {
-    method: 'POST'
-  }).then(() => {
-    console.log("Juego reiniciado");
-    pieces = [
-      ['♜','♞','♝','♛','♚','♝','♞','♜'],
-      ['♟','♟','♟','♟','♟','♟','♟','♟'],
-      ['','','','','','','',''],
-      ['','','','','','','',''],
-      ['','','','','','','',''],
-      ['','','','','','','',''],
-      ['♙','♙','♙','♙','♙','♙','♙','♙'],
-      ['♖','♘','♗','♕','♔','♗','♘','♖']
-    ];
-    selected = null;
-    drawBoard();
-  });
+  fetch('/restart', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => {
+      loadPositionFromFEN(data.fen);
+    });
+}
+
+function toUCI(move) {
+  const files = "abcdefgh";
+  const ranks = "87654321";
+  return files[move.from.x] + ranks[move.from.y] + files[move.to.x] + ranks[move.to.y];
+}
+
+function loadPositionFromFEN(fenStr = null) {
+  if (fenStr) {
+    board = parseFEN(fenStr);
+    redraw();
+    return;
+  }
+
+  fetch("/restart", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      board = parseFEN(data.fen);
+      redraw();
+    });
+}
+
+function parseFEN(fen) {
+  let rows = fen.split(" ")[0].split("/");
+  let result = [];
+
+  for (let row of rows) {
+    let parsedRow = [];
+    for (let ch of row) {
+      if (!isNaN(ch)) {
+        for (let i = 0; i < parseInt(ch); i++) parsedRow.push("");
+      } else {
+        parsedRow.push(ch);
+      }
+    }
+    result.push(parsedRow);
+  }
+  return result;
 }
