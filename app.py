@@ -1,19 +1,22 @@
 from flask import Flask, request, send_from_directory, render_template, render_template_string, jsonify, abort
 from flask_cors import CORS
 import os
+import chess
 
 app = Flask(__name__)
 CORS(app)
 
 # ========== AJEDREZ ==========
+board = chess.Board()
+
 game_state = {
     "color": "white",
-    "fen": "startpos"
+    "fen": board.fen()
 }
 
 @app.route("/chess")
-def chess():
-    return render_template("rob.html")  # asegúrate de que rob.html esté en la carpeta templates/
+def chess_page():
+    return render_template("rob.html")
 
 @app.route("/choose_color", methods=["POST"])
 def choose_color():
@@ -23,8 +26,27 @@ def choose_color():
 
 @app.route("/restart", methods=["POST"])
 def restart():
-    game_state["fen"] = "startpos"
-    return jsonify(success=True)
+    global board
+    board = chess.Board()
+    game_state["fen"] = board.fen()
+    return jsonify(success=True, fen=board.fen())
+
+@app.route("/move", methods=["POST"])
+def move():
+    global board
+    data = request.get_json()
+    move_uci = data.get("move")  # ejemplo: "e2e4"
+
+    try:
+        move = chess.Move.from_uci(move_uci)
+        if move in board.legal_moves:
+            board.push(move)
+            game_state["fen"] = board.fen()
+            return jsonify(success=True, fen=board.fen())
+        else:
+            return jsonify(success=False, error="Movimiento ilegal")
+    except Exception as e:
+        return jsonify(success=False, error=str(e))
 
 # ========== SUBIDA DE ARCHIVOS ==========
 UPLOAD_FOLDER = "uploads"
@@ -33,7 +55,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def index():
-    return send_from_directory('.', 'index.html')  # Tu página principal para subir archivos
+    return send_from_directory('.', 'index.html')
 
 @app.route('/<path:path>')
 def static_file(path):
@@ -84,9 +106,5 @@ def list_files():
     </body></html>
     """
 
-# Punto de entrada local (Render usa gunicorn directamente)
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-
-
-
