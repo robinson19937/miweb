@@ -1,6 +1,3 @@
-
-import os
-
 from flask import Flask, render_template, request, jsonify
 
 app = Flask(__name__)
@@ -26,7 +23,3 @@ def restart():
     game_state["fen"] = "startpos"
     return jsonify(success=True)
 
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(debug=False, host='0.0.0.0', port=port)
