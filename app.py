@@ -31,11 +31,15 @@ def restart():
     game_state["fen"] = board.fen()
     return jsonify(success=True, fen=board.fen())
 
+@app.route("/get_fen", methods=["GET"])
+def get_fen():
+    return jsonify(fen=board.fen())
+
 @app.route("/move", methods=["POST"])
 def move():
     global board
     data = request.get_json()
-    move_uci = data.get("move")  # ejemplo: "e2e4"
+    move_uci = data.get("move")
 
     try:
         move = chess.Move.from_uci(move_uci)
@@ -64,21 +68,11 @@ def static_file(path):
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files or request.files['file'].filename == '':
-        return render_template_string('''
-            <html><body style="text-align:center; font-size:24px; margin-top:20%; font-family: Arial, sans-serif;">
-                <p>No se seleccionó ningún archivo</p>
-                <a href="/">Volver</a>
-            </body></html>
-        ''')
+        return render_template_string('''<html><body>No se seleccion\u00f3 ning\u00fan archivo <a href="/">Volver</a></body></html>')
     file = request.files['file']
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
-    return render_template_string('''
-        <html><body style="text-align:center; font-size:24px; margin-top:20%; font-family: Arial, sans-serif;">
-            <p>Archivo subido con éxito</p>
-            <a href="/">Volver a la página principal</a>
-        </body></html>
-    ''')
+    return render_template_string('''<html><body>Archivo subido con \u00e9xito <a href="/">Volver</a></body></html>')
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -92,19 +86,10 @@ def list_files():
     try:
         files = os.listdir(app.config['UPLOAD_FOLDER'])
     except FileNotFoundError:
-        return "<p>No hay archivos subidos aún.</p>"
+        return "<p>No hay archivos subidos a\u00fan.</p>"
 
-    links = [
-        f"<li><a href='/uploads/{f}' target='_blank'>{f}</a></li>"
-        for f in files
-    ]
-    return f"""
-    <html><body style="font-family:Arial;margin:40px;">
-        <h2>Archivos Subidos</h2>
-        <ul>{''.join(links)}</ul>
-        <a href="/">Volver</a>
-    </body></html>
-    """
+    links = [f"<li><a href='/uploads/{f}' target='_blank'>{f}</a></li>" for f in files]
+    return f"<html><body><ul>{''.join(links)}</ul><a href='/'>Volver</a></body></html>"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
