@@ -26,8 +26,7 @@ function drawBoard() {
     for (let x = 0; x < 8; x++) {
       let file = isWhiteBottom ? x : 7 - x;
       let rank = isWhiteBottom ? y : 7 - y;
-      if ((x + y) % 2 === 0) fill(240);
-      else fill(100);
+      fill((x + y) % 2 === 0 ? 240 : 100);
       rect(file * tileSize, rank * tileSize, tileSize, tileSize);
 
       if (selected && selected.x === x && selected.y === y) {
@@ -99,7 +98,7 @@ function fenToMatrix(fen) {
 }
 
 function fetchBoard() {
-  fetch("/restart", { method: "POST" })
+  fetch("/get_fen")
     .then(res => res.json())
     .then(data => {
       const fen = data.fen || "";
@@ -120,5 +119,11 @@ function chooseColor(color) {
 }
 
 function restartGame() {
-  fetchBoard();
+  fetch("/restart", { method: "POST" })
+    .then(res => res.json())
+    .then(data => {
+      const fen = data.fen || "";
+      boardState = fenToMatrix(fen);
+      redraw();
+    });
 }
