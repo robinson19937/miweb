@@ -1,12 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
   <title>Chess AI</title>
   <link rel="stylesheet" href="/static/style.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+    }
+
+    #board-canvas {
+      margin: 20px auto;
+      width: 480px;
+      height: 480px;
+      border: 2px solid black;
+    }
+
+    #controls {
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 15px;
+      margin: 5px;
+      font-size: 16px;
+    }
+  </style>
 </head>
 <body>
+
+  <h1>Chess AI</h1>
+
   <div id="controls">
     <button onclick="chooseColor('white')">Jugar con Blancas</button>
     <button onclick="chooseColor('black')">Jugar con Negras</button>
