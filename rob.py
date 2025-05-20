@@ -10,7 +10,7 @@ game_state = {
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("rob.html")
 
 @app.route("/choose_color", methods=["POST"])
 def choose_color():
