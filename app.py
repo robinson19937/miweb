@@ -1,58 +1,12 @@
-from flask import Flask, request, send_from_directory, render_template, render_template_string, jsonify, abort
+from flask import Flask, request, send_from_directory, render_template_string, jsonify, abort
 from flask_cors import CORS
 import os
-import chess
 
 app = Flask(__name__)
 CORS(app)
 
-# ========== AJEDREZ ==========
-board = chess.Board()
-
-game_state = {
-    "color": "white",
-    "fen": board.fen()
-}
-
-@app.route("/chess")
-def chess_page():
-    return render_template("rob.html")
-
-@app.route("/choose_color", methods=["POST"])
-def choose_color():
-    data = request.get_json()
-    game_state["color"] = data.get("color", "white")
-    return jsonify(success=True)
-
-@app.route("/restart", methods=["POST"])
-def restart():
-    global board
-    board = chess.Board()
-    game_state["fen"] = board.fen()
-    return jsonify(success=True, fen=board.fen())
-
-@app.route("/get_fen", methods=["GET"])
-def get_fen():
-    return jsonify(fen=board.fen())
-
-@app.route("/move", methods=["POST"])
-def move():
-    global board
-    data = request.get_json()
-    move_uci = data.get("move")
-
-    try:
-        move = chess.Move.from_uci(move_uci)
-        if move in board.legal_moves:
-            board.push(move)
-            game_state["fen"] = board.fen()
-            return jsonify(success=True, fen=board.fen())
-        else:
-            return jsonify(success=False, error="Movimiento ilegal")
-    except Exception as e:
-        return jsonify(success=False, error=str(e))
-
 # ========== SUBIDA DE ARCHIVOS ==========
+
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -68,11 +22,15 @@ def static_file(path):
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files or request.files['file'].filename == '':
-        return render_template_string('''<html><body>No se seleccion\u00f3 ning\u00fan archivo <a href="/">Volver</a></body></html>')
+        return render_template_string(
+            '''<html><body>No se seleccionó ningún archivo <a href="/">Volver</a></body></html>'''
+        )
     file = request.files['file']
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
     file.save(filepath)
-    return render_template_string('''<html><body>Archivo subido con \u00e9xito <a href="/">Volver</a></body></html>')
+    return render_template_string(
+        '''<html><body>Archivo subido con éxito <a href="/">Volver</a></body></html>'''
+    )
 
 @app.route('/uploads/<filename>')
 def uploaded_file(filename):
@@ -86,7 +44,7 @@ def list_files():
     try:
         files = os.listdir(app.config['UPLOAD_FOLDER'])
     except FileNotFoundError:
-        return "<p>No hay archivos subidos a\u00fan.</p>"
+        return "<p>No hay archivos subidos aún.</p>"
 
     links = [f"<li><a href='/uploads/{f}' target='_blank'>{f}</a></li>" for f in files]
     return f"<html><body><ul>{''.join(links)}</ul><a href='/'>Volver</a></body></html>"
