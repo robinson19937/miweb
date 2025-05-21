@@ -1,7 +1,12 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>red neuronal </title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-
     <style>
         * {
             margin: 0;
@@ -91,10 +96,10 @@
             box-shadow: 0 0 10px rgba(255, 200, 150, .6);
         }
 
-        #theme-1 { background: linear-gradient(45deg, #4F46E5, #7C3AED, #C026D3, #DB2777); }
-        #theme-2 { background: linear-gradient(45deg, #F59E0B, #F97316, #DC2626, #7F1D1D); }
-        #theme-3 { background: linear-gradient(45deg, #EC4899, #8B5CF6, #6366F1, #3B82F6); }
-        #theme-4 { background: linear-gradient(45deg, #10B981, #A3E635, #FACC15, #FB923C); }
+        #theme-1 { background: linear-gradient(45deg, #FF00FF, #00FFFF, #FF9900, #FF00FF); }
+        #theme-2 { background: linear-gradient(45deg, #FF0000, #FFFF00, #FF5500, #AA0000); }
+        #theme-3 { background: linear-gradient(45deg, #00FF00, #FF00FF, #00AAFF, #AA00FF); }
+        #theme-4 { background: linear-gradient(45deg, #FFFF00, #00FFAA, #FFAA00, #FF5500); }
 
         #density-controls {
             margin-top: 8px;
@@ -129,7 +134,7 @@
             transition: transform .1s, background .1s;
         }
         .density-slider::-moz-range-thumb {
-             width: 14px;
+            width: 14px;
             height: 14px;
             border-radius: 50%;
             background: rgba(255, 120, 50, .8);
@@ -152,7 +157,7 @@
             background: rgba(0, 0, 0, .6);
             padding: 10px 15px;
             border-radius: 10px;
-             border: 1px solid rgba(255, 120, 50, .2);
+            border: 1px solid rgba(255, 120, 50, .2);
         }
 
         .control-button {
@@ -201,7 +206,7 @@
                 max-width: 120px;
                 padding: 10px;
             }
-             #theme-selector-title {
+            #theme-selector-title {
                 font-size: 14px;
             }
             .theme-button {
@@ -209,7 +214,6 @@
                 height: 30px;
             }
             .density-label { font-size: 12px; }
-
 
             #control-buttons {
                 bottom: 10px;
@@ -222,8 +226,8 @@
                 min-width: 65px;
             }
         }
-         @media (max-width: 400px) {
-             #theme-selector {
+        @media (max-width: 400px) {
+            #theme-selector {
                 flex-direction: column;
                 align-items: center;
                 max-width: none;
@@ -232,27 +236,27 @@
                 right: 10px;
                 bottom: 75px;
             }
-             .theme-grid {
+            .theme-grid {
                 grid-template-columns: repeat(4, 1fr);
                 width: 100%;
                 justify-items: center;
             }
-             #density-controls {
+            #density-controls {
                 width: 80%;
                 margin-top: 15px;
             }
-             #control-buttons {
+            #control-buttons {
                 width: calc(100% - 20px);
                 justify-content: space-around;
             }
         }
-
     </style>
-
+</head>
+<body>
     <div id="instructions-container" class="ui-panel">
-        <div id="instruction-title">Redes neuronales proyecto interactivo </div>
-        <div>Nosotros tenemos que hacer tareas repetitivas para poder aprender algo de forma asertiva, tomamos informacion de muchas fuentes , libros experiencias vividas, cometiendo errores etc, de esa misma forma es como entrenamos a las redes neuronales pasan la informacion de un lado a otro , se hace comparaciones , analisis para determinar cual sera la probabilidad con menos errores y transformarla en un resultado</div>
-        </div>
+        <div id="instruction-title">Redes neuronales proyecto interactivo</div>
+        <div>Nosotros tenemos que hacer tareas repetitivas para poder aprender algo de forma asertiva, tomamos información de muchas fuentes, libros, experiencias vividas, cometiendo errores, etc. De esa misma forma es como entrenamos a las redes neuronales: pasan la información de un lado a otro, se hacen comparaciones, análisis para determinar cuál será la probabilidad con menos errores y transformarla en un resultado.</div>
+    </div>
 
     <div id="theme-selector" class="ui-panel">
         <div id="theme-selector-title">Visual Theme</div>
@@ -302,11 +306,36 @@
             densityFactor: 1
         };
 
+        // Enhanced color palettes with more vibrant and dynamic colors
         const colorPalettes = [
-            [new THREE.Color(0x4F46E5), new THREE.Color(0x7C3AED), new THREE.Color(0xC026D3), new THREE.Color(0xDB2777), new THREE.Color(0x8B5CF6)],
-            [new THREE.Color(0xF59E0B), new THREE.Color(0xF97316), new THREE.Color(0xDC2626), new THREE.Color(0x7F1D1D), new THREE.Color(0xFBBF24)],
-            [new THREE.Color(0xEC4899), new THREE.Color(0x8B5CF6), new THREE.Color(0x6366F1), new THREE.Color(0x3B82F6), new THREE.Color(0xA855F7)],
-            [new THREE.Color(0x10B981), new THREE.Color(0xA3E635), new THREE.Color(0xFACC15), new THREE.Color(0xFB923C), new THREE.Color(0x4ADE80)]
+            [
+                new THREE.Color(0xFF00FF), // Vivid Magenta
+                new THREE.Color(0x00FFFF), // Cyan
+                new THREE.Color(0xFF9900), // Bright Orange
+                new THREE.Color(0xFF00FF), // Vivid Magenta (loop)
+                new THREE.Color(0xAA00FF)  // Electric Purple
+            ],
+            [
+                new THREE.Color(0xFF0000), // Pure Red
+                new THREE.Color(0xFFFF00), // Bright Yellow
+                new THREE.Color(0xFF5500), // Fiery Orange
+                new THREE.Color(0xAA0000), // Deep Red
+                new THREE.Color(0xFFAA00)  // Amber
+            ],
+            [
+                new THREE.Color(0x00FF00), // Lime Green
+                new THREE.Color(0xFF00FF), // Magenta
+                new THREE.Color(0x00AAFF), // Sky Blue
+                new THREE.Color(0xAA00FF), // Purple
+                new THREE.Color(0x00FFAA)  // Aqua
+            ],
+            [
+                new THREE.Color(0xFFFF00), // Bright Yellow
+                new THREE.Color(0x00FFAA), // Aqua
+                new THREE.Color(0xFFAA00), // Orange
+                new THREE.Color(0xFF5500), // Coral
+                new THREE.Color(0xAAFF00)  // Chartreuse
+            ]
         ];
 
         const scene = new THREE.Scene();
@@ -315,13 +344,13 @@
         const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1200);
         camera.position.set(0, 5, 22);
 
-        const canvasElement = document.getElementById('neural-network-canvas'); // Get canvas element
+        const canvasElement = document.getElementById('neural-network-canvas');
         const renderer = new THREE.WebGLRenderer({ canvas: canvasElement, antialias: true, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
         renderer.setClearColor(0x000000);
         renderer.outputColorSpace = THREE.SRGBColorSpace;
-        
+
         function createStarfield() {
             const count = 5000, pos = [];
             for (let i = 0; i < count; i++) {
@@ -362,7 +391,8 @@
         const composer = new EffectComposer(renderer);
         composer.addPass(new RenderPass(scene, camera));
 
-        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 1.5, 0.4, 0.68);
+        // Enhanced bloom effect for stronger glow
+        const bloomPass = new UnrealBloomPass(new THREE.Vector2(window.innerWidth, window.innerHeight), 2.0, 0.5, 0.6);
         composer.addPass(bloomPass);
 
         const filmPass = new FilmPass(0.35, 0.55, 2048, false);
@@ -376,7 +406,7 @@
             uPulseTimes: { value: [-1e3, -1e3, -1e3] },
             uPulseColors: { value: [new THREE.Color(1, 1, 1), new THREE.Color(1, 1, 1), new THREE.Color(1, 1, 1)] },
             uPulseSpeed: { value: 15.0 },
-            uBaseNodeSize: { value: 0.5 },
+            uBaseNodeSize: { value: 0.6 },
             uActivePalette: { value: 0 }
         };
 
@@ -443,18 +473,18 @@
                 }
                 vPulseIntensity = min(totalPulseIntensity, 1.0);
 
-                float timeScale = 0.5 + 0.5 * sin(uTime * 0.8 + distanceFromRoot * 0.2);
-                float baseSize = nodeSize * (0.8 + 0.2 * timeScale);
-                float pulseSize = baseSize * (1.0 + vPulseIntensity * 2.0);
+                float timeScale = 0.5 + 0.5 * sin(uTime * 1.0 + distanceFromRoot * 0.3);
+                float baseSize = nodeSize * (0.8 + 0.3 * timeScale);
+                float pulseSize = baseSize * (1.0 + vPulseIntensity * 3.0);
 
                 vec3 modifiedPosition = position;
                 if (nodeType > 0.5) {
-                    float noise = fbm(position * 0.1, uTime * 0.1);
-                    modifiedPosition += normal * noise * 0.2;
+                    float noise = fbm(position * 0.15, uTime * 0.15);
+                    modifiedPosition += normal * noise * 0.3;
                 }
 
                 vec4 mvPosition = modelViewMatrix * vec4(modifiedPosition, 1.0);
-                gl_PointSize = pulseSize * uBaseNodeSize * (800.0 / -mvPosition.z);
+                gl_PointSize = pulseSize * uBaseNodeSize * (900.0 / -mvPosition.z);
                 gl_Position = projectionMatrix * mvPosition;
             }`,
 
@@ -468,26 +498,26 @@
                 if (dist > 1.0) discard;
 
                 float glowStrength = 1.0 - smoothstep(0.0, 1.0, dist);
-                glowStrength = pow(glowStrength, 1.4);
+                glowStrength = pow(glowStrength, 1.2);
 
-                vec3 baseColor = vColor * (0.8 + 0.2 * sin(uTime * 0.5 + vDistanceFromRoot * 0.3));
+                vec3 baseColor = vColor * (0.9 + 0.4 * sin(uTime * 0.8 + vDistanceFromRoot * 0.5));
                 vec3 finalColor = baseColor;
 
                 if (vPulseIntensity > 0.0) {
-                    vec3 pulseColor = mix(vec3(1.0), uPulseColors[0], 0.3);
+                    vec3 pulseColor = mix(vec3(1.0), uPulseColors[0], 0.5);
                     finalColor = mix(baseColor, pulseColor, vPulseIntensity);
-                    finalColor *= (1.0 + vPulseIntensity * 0.7);
+                    finalColor *= (1.0 + vPulseIntensity * 1.0);
                 }
 
-                float alpha = glowStrength * (0.9 - 0.5 * dist);
+                float alpha = glowStrength * (0.95 - 0.4 * dist);
 
                 float camDistance = length(vPosition - cameraPosition);
                 float distanceFade = smoothstep(80.0, 10.0, camDistance);
 
                 if (vNodeType > 0.5) {
-                    alpha *= 0.85;
+                    alpha *= 0.8;
                 } else {
-                    finalColor *= 1.2;
+                    finalColor *= 1.5;
                 }
 
                 gl_FragColor = vec4(finalColor, alpha * distanceFade);
@@ -516,7 +546,7 @@
                 vPathPosition = t;
 
                 vec3 midPoint = mix(startPoint, endPoint, 0.5);
-                float pathOffset = sin(t * 3.14159) * 0.1;
+                float pathOffset = sin(t * 3.14159) * 0.15;
                 vec3 perpendicular = normalize(cross(normalize(endPoint - startPoint), vec3(0.0, 1.0, 0.0)));
                 if (length(perpendicular) < 0.1) perpendicular = vec3(1.0, 0.0, 0.0);
                 midPoint += perpendicular * pathOffset;
@@ -525,9 +555,9 @@
                 vec3 p1 = mix(midPoint, endPoint, t);
                 vec3 finalPos = mix(p0, p1, t);
 
-                float noiseTime = uTime * 0.2;
-                float noise = fbm(vec3(pathIndex * 0.1, t * 0.5, noiseTime), noiseTime);
-                finalPos += perpendicular * noise * 0.1;
+                float noiseTime = uTime * 0.25;
+                float noise = fbm(vec3(pathIndex * 0.15, t * 0.6, noiseTime), noiseTime);
+                finalPos += perpendicular * noise * 0.15;
 
                 vec3 worldPos = (modelMatrix * vec4(finalPos, 1.0)).xyz;
 
@@ -548,23 +578,23 @@
             varying vec3 vColor;varying float vConnectionStrength;varying float vPulseIntensity;varying float vPathPosition;
 
             void main() {
-                vec3 baseColor = vColor * (0.7 + 0.3 * sin(uTime * 0.5 + vPathPosition * 10.0));
+                vec3 baseColor = vColor * (0.8 + 0.4 * sin(uTime * 0.8 + vPathPosition * 12.0));
 
-                float flowPattern = sin(vPathPosition * 20.0 - uTime * 3.0) * 0.5 + 0.5;
-                float flowIntensity = 0.3 * flowPattern * vConnectionStrength;
+                float flowPattern = sin(vPathPosition * 25.0 - uTime * 4.0) * 0.5 + 0.5;
+                float flowIntensity = 0.4 * flowPattern * vConnectionStrength;
 
                 vec3 finalColor = baseColor;
 
                 if (vPulseIntensity > 0.0) {
-                    vec3 pulseColor = mix(vec3(1.0), uPulseColors[0], 0.3);
+                    vec3 pulseColor = mix(vec3(1.0), uPulseColors[0], 0.5);
                     finalColor = mix(baseColor, pulseColor, vPulseIntensity);
-                    flowIntensity += vPulseIntensity * 0.5;
+                    flowIntensity += vPulseIntensity * 0.7;
                 }
 
-                finalColor *= (0.6 + flowIntensity + vConnectionStrength * 0.4);
+                finalColor *= (0.7 + flowIntensity + vConnectionStrength * 0.5);
 
-                float alpha = 0.8 * vConnectionStrength + 0.2 * flowPattern;
-                alpha = mix(alpha, min(1.0, alpha * 2.0), vPulseIntensity);
+                float alpha = 0.9 * vConnectionStrength + 0.3 * flowPattern;
+                alpha = mix(alpha, min(1.0, alpha * 2.5), vPulseIntensity);
 
                 gl_FragColor = vec4(finalColor, alpha);
             }`
@@ -576,7 +606,7 @@
                 this.connections = [];
                 this.level = level;
                 this.type = type;
-                this.size = type === 0 ? THREE.MathUtils.randFloat(0.7, 1.2) : THREE.MathUtils.randFloat(0.4, 0.9);
+                this.size = type === 0 ? THREE.MathUtils.randFloat(0.8, 1.3) : THREE.MathUtils.randFloat(0.5, 1.0);
                 this.distanceFromRoot = 0;
             }
 
@@ -688,7 +718,7 @@
                     }
                 }
 
-                 for (let i = 0; i < axisEndpoints.length; i++) {
+                for (let i = 0; i < axisEndpoints.length; i++) {
                     const startNode = axisEndpoints[i];
                     const endNode = axisEndpoints[(i + 2) % axisEndpoints.length];
                     const numIntermediates = 3;
@@ -784,7 +814,7 @@
                     }
                 }
 
-                 for (let d1 = 0; d1 < dimensions; d1++) {
+                for (let d1 = 0; d1 < dimensions; d1++) {
                     for (let d2 = d1 + 1; d2 < dimensions; d2++) {
                         const connectionsCount = Math.floor(5 * densityFactor);
                         for (let i = 0; i < connectionsCount; i++) {
@@ -848,7 +878,6 @@
                     const spiralArray = [];
                     for (let i = 0; i < nodesPerSpiral; i++) {
                         const t = i / (nodesPerSpiral - 1);
-
                         const heightCurve = 1 - Math.pow(2 * t - 1, 2);
                         const height = (t - 0.5) * totalHeight;
                         const radiusCurve = Math.sin(t * Math.PI);
@@ -1025,7 +1054,7 @@
                     }
                 }
 
-                 const interClusterCount = Math.floor(15 * densityFactor);
+                const interClusterCount = Math.floor(15 * densityFactor);
                 for (let i = 0; i < interClusterCount; i++) {
                     const cluster1 = clusterNodes[Math.floor(Math.random() * clusterNodes.length)];
                     let cluster2;
@@ -1051,7 +1080,7 @@
                     }
                 }
 
-                 const longRangeCount = Math.floor(10 * densityFactor);
+                const longRangeCount = Math.floor(10 * densityFactor);
                 const outerNodes = nodes.filter(n => n.distanceFromRoot > maxDist * 0.6)
                                         .sort(() => Math.random() - 0.5)
                                         .slice(0, longRangeCount);
@@ -1087,7 +1116,7 @@
                 case 3: generateSynapticCloud(); break;
             }
 
-             if (densityFactor < 1.0) {
+            if (densityFactor < 1.0) {
                 const originalNodeCount = nodes.length;
                 nodes = nodes.filter((node, index) => {
                     if (node === rootNode) return true;
@@ -1144,9 +1173,9 @@
                 const colorIndex = Math.min(node.level, palette.length - 1);
                 const baseColor = palette[colorIndex % palette.length].clone();
                 baseColor.offsetHSL(
-                    THREE.MathUtils.randFloatSpread(0.05),
-                    THREE.MathUtils.randFloatSpread(0.1),
-                    THREE.MathUtils.randFloatSpread(0.1)
+                    THREE.MathUtils.randFloatSpread(0.07),
+                    THREE.MathUtils.randFloatSpread(0.15),
+                    THREE.MathUtils.randFloatSpread(0.15)
                 );
                 nodeColors.push(baseColor.r, baseColor.g, baseColor.b);
             });
@@ -1201,9 +1230,9 @@
                             const avgLevel = Math.min(Math.floor((node.level + connectedNode.level) / 2), palette.length - 1);
                             const baseColor = palette[avgLevel % palette.length].clone();
                             baseColor.offsetHSL(
-                                THREE.MathUtils.randFloatSpread(0.05),
-                                THREE.MathUtils.randFloatSpread(0.1),
-                                THREE.MathUtils.randFloatSpread(0.1)
+                                THREE.MathUtils.randFloatSpread(0.07),
+                                THREE.MathUtils.randFloatSpread(0.15),
+                                THREE.MathUtils.randFloatSpread(0.15)
                             );
                             connectionColors.push(baseColor.r, baseColor.g, baseColor.b);
                         }
@@ -1257,9 +1286,9 @@
                 const colorIndex = Math.min(node.level, palette.length - 1);
                 const baseColor = palette[colorIndex % palette.length].clone();
                 baseColor.offsetHSL(
-                    THREE.MathUtils.randFloatSpread(0.05),
-                    THREE.MathUtils.randFloatSpread(0.1),
-                    THREE.MathUtils.randFloatSpread(0.1)
+                    THREE.MathUtils.randFloatSpread(0.07),
+                    THREE.MathUtils.randFloatSpread(0.15),
+                    THREE.MathUtils.randFloatSpread(0.15)
                 );
                 nodeColorsAttr.setXYZ(i, baseColor.r, baseColor.g, baseColor.b);
             }
@@ -1268,7 +1297,7 @@
             const connectionColors = [];
             const processedConnections = new Set();
             neuralNetwork.nodes.forEach((node, nodeIndex) => {
-                 node.connections.forEach(connection => {
+                node.connections.forEach(connection => {
                     const connectedNode = connection.node;
                     const connectedIndex = neuralNetwork.nodes.indexOf(connectedNode);
                     if (connectedIndex === -1) return;
@@ -1278,17 +1307,17 @@
                         processedConnections.add(key);
                         const numSegments = 15;
                         for (let i = 0; i < numSegments; i++) {
-                             const avgLevel = Math.min(Math.floor((node.level + connectedNode.level) / 2), palette.length - 1);
-                             const baseColor = palette[avgLevel % palette.length].clone();
-                             baseColor.offsetHSL(
-                                 THREE.MathUtils.randFloatSpread(0.05),
-                                 THREE.MathUtils.randFloatSpread(0.1),
-                                 THREE.MathUtils.randFloatSpread(0.1)
-                             );
-                             connectionColors.push(baseColor.r, baseColor.g, baseColor.b);
+                            const avgLevel = Math.min(Math.floor((node.level + connectedNode.level) / 2), palette.length - 1);
+                            const baseColor = palette[avgLevel % palette.length].clone();
+                            baseColor.offsetHSL(
+                                THREE.MathUtils.randFloatSpread(0.07),
+                                THREE.MathUtils.randFloatSpread(0.15),
+                                THREE.MathUtils.randFloatSpread(0.15)
+                            );
+                            connectionColors.push(baseColor.r, baseColor.g, baseColor.b);
                         }
                     }
-                 });
+                });
             });
             connectionsMesh.geometry.setAttribute('connectionColor', new THREE.Float32BufferAttribute(connectionColors, 3));
             connectionsMesh.geometry.attributes.connectionColor.needsUpdate = true;
@@ -1378,8 +1407,8 @@
             e.stopPropagation();
             config.currentFormation = (config.currentFormation + 1) % config.numFormations;
             createNetworkVisualization(config.currentFormation, config.densityFactor);
-             controls.autoRotate = false;
-             setTimeout(() => { controls.autoRotate = true; }, 2000);
+            controls.autoRotate = false;
+            setTimeout(() => { controls.autoRotate = true; }, 2000);
         });
 
         pausePlayBtn.addEventListener('click', (e) => {
@@ -1392,8 +1421,8 @@
         resetCameraBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             controls.reset();
-             controls.autoRotate = false;
-             setTimeout(() => { controls.autoRotate = true; }, 1500);
+            controls.autoRotate = false;
+            setTimeout(() => { controls.autoRotate = true; }, 1500);
         });
 
         const clock = new THREE.Clock();
@@ -1422,8 +1451,8 @@
 
         function init() {
             createNetworkVisualization(config.currentFormation, config.densityFactor);
-             document.querySelectorAll('.theme-button').forEach(b => b.classList.remove('active'));
-             document.querySelector(`.theme-button[data-theme="${config.activePaletteIndex}"]`).classList.add('active');
+            document.querySelectorAll('.theme-button').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.theme-button[data-theme="${config.activePaletteIndex}"]`).classList.add('active');
             updateTheme(config.activePaletteIndex);
             animate();
         }
@@ -1435,10 +1464,11 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             composer.setSize(window.innerWidth, window.innerHeight);
 
-             bloomPass.resolution.set(window.innerWidth, window.innerHeight);
+            bloomPass.resolution.set(window.innerWidth, window.innerHeight);
         }
         window.addEventListener('resize', onWindowResize);
 
         init();
-
     </script>
+</body>
+</html>
