@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Soluciones Tecnológicas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js" defer></script>
+  <script src="sketch.js?v=<?php echo time(); ?>" defer></script>
+
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    #uploadForm {
+      position: absolute;
+      top: 55%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 10px 15px;
+      border-radius: 15px;
+      font-size: 16px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      width: 90%;
+      max-width: 280px;
+      text-align: center;
+      z-index: 10;
+    }
+
+    #uploadForm input[type="file"],
+    #uploadForm input[type="submit"] {
+      margin-top: 15px;
+      font-size: 15px;
+      padding: 10px;
+      width: 100%;
+      border-radius: 10px;
+      border: none;
+    }
+
+    #uploadForm input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+
+    #returnButton {
+      position: absolute;
+      bottom: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 15px 20px;
+      width: 90%;
+      max-width: 280px;
+      border-radius: 12px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      text-align: center;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      z-index: 10;
+      cursor: pointer;
+    }
+
+    #githubLink {
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(255, 255, 255, 0.9);
+      padding: 15px 20px;
+      border-radius: 12px;
+      font-size: 22px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      text-align: center;
+      z-index: 10;
+    }
+
+    #githubLink a {
+      color: #0000ee;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    #githubLink a:hover {
+      text-decoration: underline;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      #uploadForm,
+      #githubLink,
+      #returnButton {
+        background: rgba(30, 30, 30, 0.9);
+        color: #fff;
+        box-shadow: 0 4px 15px rgba(255,255,255,0.1);
+      }
+
+      #githubLink a {
+        color: #66ccff;
+      }
+
+      #uploadForm input[type="submit"],
+      #returnButton {
+        background-color: #66bb6a;
+      }
+    }
+  </style>
+</head>
+<body>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label><br>
+    <input type="file" name="file" id="fileInput"><br>
+    <input type="submit" value="Subir">
+  </form>
+
+  <div id="githubLink">
+    <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
+  </div>
+
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const fileInput = document.getElementById('fileInput');
+      if (!fileInput.files.length) {
+        alert("Por favor selecciona un archivo.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+
+      fetch('https://miweb-mj38.onrender.com/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(data => {
+        alert("✅ Archivo subido exitosamente.");
+        location.reload(); // mejor práctica que modificar todo el body
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert("Hubo un error al subir el archivo.");
+      });
+    });
+  </script>
+</body>
+</html>
