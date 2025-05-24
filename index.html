@@ -1,124 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <title>Soluciones Tecnológicas</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js" defer></script>
   <script src="sketch.js?v=<?php echo time(); ?>" defer></script>
+
   <style>
-    /* --- CSS combinado --- */
-    ::-webkit-scrollbar { width: 0.625rem; height: 0.625rem; }
-    ::-webkit-scrollbar-thumb {
-      background: #111; border-radius: 0.3125rem;
-      box-shadow: inset 0.125rem 0.125rem 0.125rem rgba(255, 255, 255, 0.25),
-      inset -0.125rem -0.125rem 0.125rem rgba(0, 0, 0, 0.25); cursor: default;
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: sans-serif;
     }
-    ::-webkit-scrollbar-track { background: #333; }
-    ::selection { background: #fff; color: #333; }
-    html, body {
-      height: 100vh; height: 100dvh; margin: 0; overflow: auto; /* Cambiado para permitir desplazamiento del formulario */
-      font-family: system-ui, sans-serif;
-    }
-    body {
-      display: grid; grid-template-rows: calc(100dvh - 4rem) 4rem;
-    }
-    canvas, .editor, #controls {
-      grid-row: 1; grid-column: 1;
-    }
-    canvas {
-      --canvas-z-index: -1;
-      width: 100%; height: auto;
-      object-fit: contain;
-      background: black;
-      touch-action: none;
-      z-index: var(--canvas-z-index);
-    }
-    .editor, .overlay, #error {
-      font-family: 'Courier New', Courier, monospace;
-      background: repeating-linear-gradient(0deg, #000a, #1119, #000a .25rem);
-      padding: 1em;
-    }
-    .editor {
-      color: #fefefe; tab-size: 2;
-      border: none; resize: none;
-    }
-    .editor:focus { outline: none; }
-    #error {
-      grid-row: 2; grid-column: 1; margin: 0;
-      padding-block: 0; padding-top: .5em;
-      color: firebrick; overflow: auto;
-      text-wrap: pretty;
-    }
-    #indicator {
-      visibility: hidden; position: absolute;
-      top: calc(var(--top, 0px) - var(--scroll-top, 0px));
-      width: 0; height: 0;
-      border-top: 10px solid transparent;
-      border-bottom: 10px solid transparent;
-      border-left: 10px solid firebrick;
-      transform: translateY(-25%);
-    }
-    .overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; margin: 0;
-    }
-    .editor, .overlay {
-      font-size: 1rem; line-height: 1.2;
-      white-space: pre;
-    }
-    #controls {
-      position: fixed; top: 1em; right: 2em;
-    }
-    .controls {
-      position: relative; display: flex; gap: 1.5em;
-      padding: .5em 1.25em;
-      background: #1111; border-radius: 4px;
-    }
-    .controls::before, .controls::after {
-      content: ''; position: absolute; z-index: -1;
-      inset: 0; transform: scale(.95); border-radius: inherit;
-      opacity: 0;
-    }
-    .controls::before {
-      background: #aef; animation: pulse 2s infinite;
-    }
-    .controls::after {
-      background: #fefefe66; transition: transform 200ms ease-in-out;
-    }
-    .controls:hover::before, .controls:hover::after {
-      opacity: 1;
-    }
-    .controls:hover::before {
-      transform: scale(.98); filter: blur(2px);
-    }
-    .controls:hover::after {
-      transform: scale(1.025, 1.1);
-    }
-    .controls:hover { background: #111f; }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.0125); }
-      100% { transform: scale(1); }
-    }
-    .hidden { display: none !important; }
-    .opaque { opacity: 1 !important; background: #111 !important; }
-    input {
-      all: unset; opacity: .2;
-      filter: saturate(0) invert(1);
-      cursor: pointer; transition: opacity 200ms ease-in-out;
-      padding: .25em .5em;
-    }
-    input:hover { opacity: 1; }
-    .icon { text-align: center; line-height: 1; }
-    #btnToggleView { width: 1.25em; }
-    #btnToggleView::after { content: '👁'; }
-    #btnToggleView:checked::after { content: '✏️'; }
-    #btnToggleResolution::after { content: '1️⃣'; }
-    #btnToggleResolution:checked::after { content: '2️⃣'; }
-    #btnReset::after { content: '⏮️'; }
-    
-    /* Estilos del formulario, enlace y botón de retorno */
+
     #uploadForm {
       position: absolute;
       top: 55%;
@@ -134,6 +30,7 @@
       text-align: center;
       z-index: 10;
     }
+
     #uploadForm input[type="file"],
     #uploadForm input[type="submit"] {
       margin-top: 15px;
@@ -143,11 +40,13 @@
       border-radius: 10px;
       border: none;
     }
+
     #uploadForm input[type="submit"] {
       background-color: #4CAF50;
       color: white;
       font-weight: bold;
     }
+
     #returnButton {
       position: absolute;
       bottom: 90px;
@@ -167,6 +66,7 @@
       z-index: 10;
       cursor: pointer;
     }
+
     #githubLink {
       position: absolute;
       bottom: 30px;
@@ -180,14 +80,17 @@
       text-align: center;
       z-index: 10;
     }
+
     #githubLink a {
       color: #0000ee;
       text-decoration: none;
       font-weight: bold;
     }
+
     #githubLink a:hover {
       text-decoration: underline;
     }
+
     @media (prefers-color-scheme: dark) {
       #uploadForm,
       #githubLink,
@@ -196,9 +99,11 @@
         color: #fff;
         box-shadow: 0 4px 15px rgba(255,255,255,0.1);
       }
+
       #githubLink a {
         color: #66ccff;
       }
+
       #uploadForm input[type="submit"],
       #returnButton {
         background-color: #66bb6a;
@@ -207,195 +112,17 @@
   </style>
 </head>
 <body>
-  <!-- HTML combinado -->
-  <canvas id="canvas"></canvas>
-  <textarea id="codeEditor" class="editor" spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" oninput="render()"></textarea>
-  <pre id="error"></pre>
-  <div id="indicator"></div>
-  <div id="controls">
-    <div class="controls">
-      <input id="btnToggleView" class="icon" type="checkbox" name="toggleView" onclick="toggleView()">
-      <input id="btnToggleResolution" class="icon" type="checkbox" name="toggleResolution" onchange="toggleResolution()">
-      <input id="btnReset" class="icon" type="checkbox" name="reset" onclick="reset()">
-    </div>
-  </div>
   <form id="uploadForm" enctype="multipart/form-data">
     <label>📄 Para trabajos: puedes cotizar tu trabajo subiendo el documento aquí:</label><br>
     <input type="file" name="file" id="fileInput"><br>
     <input type="submit" value="Subir">
   </form>
-  <button id="returnButton">Volver</button>
+
   <div id="githubLink">
     <a href="https://github.com/robinson19937" target="_blank">Mi cuenta GitHub</a>
   </div>
 
-  <!-- Shader (Fragment) -->
-  <script type="x-shader/x-fragment">#version 300 es
-precision highp float;
-out vec4 O;
-uniform float time;
-uniform vec2 resolution;
-uniform vec2 move;
-#define FC gl_FragCoord.xy
-#define R resolution
-#define T time
-#define N normalize
-#define S smoothstep
-#define MN min(R.x,R.y)
-#define rot(a) mat2(cos((a)-vec4(0,11,33,0)))
-#define csqr(a) vec2(a.x*a.x-a.y*a.y,2.*a.x*a.y)
-float rnd(vec3 p) {
-  p=fract(p*vec3(12.9898,78.233,156.34));
-  p+=dot(p,p+34.56);
-  return fract(p.x*p.y*p.z);
-}
-float swirls(in vec3 p) {
-  float d=.0;
-  vec3 c=p;
-  for(float i=min(.0,time); i<9.; i++) {
-    p=.7*abs(p)/dot(p,p)-.7;
-    p.yz=csqr(p.yz);
-    p=p.zxy;
-    d+=exp(-19.*abs(dot(p,c)));
-  }
-  return d;
-}
-vec3 march(in vec3 p, vec3 rd) {
-  float d=.2, t=.0, c=.0, k=mix(.9,1.,rnd(rd)),
-  maxd=length(p)-1.;
-  vec3 col=vec3(0);
-  for(float i=min(.0,time); i<120.; i++) {
-    t+=d*exp(-2.*c)*k;
-    c=swirls(p+rd*t);
-    if (t<5e-2 || t>maxd) break;
-    col+=vec3(c*c,c/1.05,c)*8e-3;
-  }
-  return col;
-}
-float rnd(vec2 p) {
-  p=fract(p*vec2(12.9898,78.233));
-  p+=dot(p,p+34.56);
-  return fract(p.x*p.y);
-}
-vec3 sky(vec2 p, bool anim) {
-  p.x-=.17-(anim?2e-4*T:.0);
-  p*=500.;
-  vec2 id=floor(p), gv=fract(p)-.5;
-  float n=rnd(id), d=length(gv);
-  if (n<.975) return vec3(0);
-  return vec3(S(3e-2*n,1e-3*n,d*d));
-}
-void cam(inout vec3 p) {
-  p.yz*=rot(move.y*6.3/MN-T*.05);
-  p.xz*=rot(-move.x*6.3/MN+T*.025);
-}
-void main() {
-  vec2 uv=(FC-.5*R)/MN;
-  vec3 col=vec3(0),
-  p=vec3(0,0,-16),
-  rd=N(vec3(uv,1)), rdd=rd;
-  cam(p); cam(rd);
-  col=march(p,rd);
-  col=S(-.1,1.,col);
-  col+=sky(uv,true);
-  O=vec4(pow(col,vec3(.4545)),1);
-}
-</script>
-
-  <!-- JS combinado -->
   <script>
-    const frag = document.querySelector("script[type='x-shader/x-fragment']").textContent;
-    let canvas = document.getElementById("canvas"),
-        editor = document.getElementById("codeEditor"),
-        gl = canvas.getContext("webgl2"),
-        move = [0, 0], width, height, program, buffer,
-        uTime, uRes, uMove, startTime = performance.now(),
-        loopId, scale = 1;
-    editor.value = frag;
-    const vertex = `#version 300 es
-    in vec4 a_position;
-    void main() { gl_Position = a_position; }`;
-    function compileShader(gl, type, source) {
-      const shader = gl.createShader(type);
-      gl.shaderSource(shader, source);
-      gl.compileShader(shader);
-      if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-        console.error("Shader error:", gl.getShaderInfoLog(shader));
-        gl.deleteShader(shader);
-        return null;
-      }
-      return shader;
-    }
-    function createProgram(gl, vertexSource, fragmentSource) {
-      const vShader = compileShader(gl, gl.VERTEX_SHADER, vertexSource),
-            fShader = compileShader(gl, gl.FRAGMENT_SHADER, fragmentSource);
-      const prog = gl.createProgram();
-      gl.attachShader(prog, vShader);
-      gl.attachShader(prog, fShader);
-      gl.linkProgram(prog);
-      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        throw new Error(gl.getProgramInfoLog(prog));
-      }
-      return prog;
-    }
-    function render() {
-      cancelAnimationFrame(loopId);
-      document.getElementById("error").textContent = "";
-      try {
-        program = createProgram(gl, vertex, editor.value);
-        uTime = gl.getUniformLocation(program, "time");
-        uRes = gl.getUniformLocation(program, "resolution");
-        uMove = gl.getUniformLocation(program, "move");
-        draw();
-      } catch (err) {
-        document.getElementById("error").textContent = err.message;
-      }
-    }
-    function draw(time) {
-      gl.useProgram(program);
-      gl.uniform1f(uTime, (time - startTime) * 0.001);
-      gl.uniform2f(uRes, width, height);
-      gl.uniform2fv(uMove, move);
-      gl.drawArrays(gl.TRIANGLES, 0, 6);
-      loopId = requestAnimationFrame(draw);
-    }
-    function toggleView() {
-      const isChecked = document.getElementById("btnToggleView").checked;
-      editor.classList.toggle("hidden", isChecked);
-    }
-    function toggleResolution() {
-      scale = scale === 1 ? 2 : 1;
-      resize();
-      render();
-    }
-    function reset() {
-      move = [0, 0];
-      render();
-    }
-    function resize() {
-      width = window.innerWidth * scale;
-      height = window.innerHeight * scale;
-      canvas.width = width;
-      canvas.height = height;
-      gl.viewport(0, 0, width, height);
-    }
-    function setup() {
-      resize();
-      const vertices = new Float32Array([
-        -1, -1, 1, -1, -1, 1,
-        -1, 1, 1, -1, 1, 1,
-      ]);
-      buffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-      gl.enableVertexAttribArray(0);
-      gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
-      render();
-    }
-    setup();
-    window.addEventListener("resize", () => { resize(); render(); });
-
-    // Manejo del formulario
     document.getElementById('uploadForm').addEventListener('submit', function(event) {
       event.preventDefault();
       const fileInput = document.getElementById('fileInput');
@@ -403,8 +130,10 @@ void main() {
         alert("Por favor selecciona un archivo.");
         return;
       }
+
       const formData = new FormData();
       formData.append('file', fileInput.files[0]);
+
       fetch('https://miweb-mj38.onrender.com/upload', {
         method: 'POST',
         body: formData
@@ -412,17 +141,12 @@ void main() {
       .then(response => response.text())
       .then(data => {
         alert("✅ Archivo subido exitosamente.");
-        location.reload();
+        location.reload(); // mejor práctica que modificar todo el body
       })
       .catch(error => {
         console.error('Error:', error);
         alert("Hubo un error al subir el archivo.");
       });
-    });
-
-    // Manejo del botón de retorno
-    document.getElementById('returnButton').addEventListener('click', function() {
-      location.reload(); // Recarga la página como acción de retorno
     });
   </script>
 </body>
