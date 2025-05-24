@@ -23,7 +23,7 @@ function setup() {
   fill('blue');
   text('Algoritmo 19937', 256, 120);
  
- textSize(25);
+ textSize(35);
   fill('black');
   text('The algorithm 19937, also known as the Mersenne Twister (specifically, MT19937), is a widely used                                                                                                        '      , 220, 220);
   
