@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Raspberry Terminal</title>
+  <style>
+    body {
+      background-color: black;
+      color: #00FF00;
+      font-family: monospace;
+      padding: 20px;
+    }
+    #output {
+      width: 100%;
+      height: 400px;
+      background: black;
+      border: 1px solid #00FF00;
+      padding: 10px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+    }
+    #input-line {
+      display: flex;
+      margin-top: 10px;
+    }
+    #command {
+      flex: 1;
+      background: black;
+      border: 1px solid #00FF00;
+      color: #00FF00;
+      font-family: monospace;
+      padding: 10px;
+    }
+    #send {
+      background-color: #00FF00;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      font-family: monospace;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <h1>Raspberry Terminal</h1>
+  <div id="output"></div>
+  <div id="input-line">
+    <input type="text" id="command" placeholder="Escribe un comando...">
+    <button id="send">Enviar</button>
+  </div>
+
+  <script>
+    document.getElementById('send').addEventListener('click', async () => {
+      const cmd = document.getElementById('command').value;
+      if (!cmd.trim()) return;
+
+      document.getElementById('output').innerText += `> ${cmd}\n`;
+      document.getElementById('command').value = "";
+
+      try {
+        const res = await fetch('/raspberry/enviar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: `comando=${encodeURIComponent(cmd)}`
+        });
+
+        const text = await res.text();
+        document.getElementById('output').innerText += `${text}\n`;
+        document.getElementById('output').scrollTop = document.getElementById('output').scrollHeight;
+      } catch (e) {
+        document.getElementById('output').innerText += `Error: ${e.message}\n`;
+      }
+    });
+  </script>
+</body>
+</html>
