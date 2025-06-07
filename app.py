@@ -1,6 +1,7 @@
 from flask import Flask, request, send_from_directory, render_template_string, jsonify, abort
 from flask_cors import CORS
 import os
+import queue
 
 app = Flask(__name__)
 CORS(app)
@@ -48,6 +49,27 @@ def list_files():
 
     links = [f"<li><a href='/uploads/{f}' target='_blank'>{f}</a></li>" for f in files]
     return f"<html><body><ul>{''.join(links)}</ul><a href='/'>Volver</a></body></html>"
+
+# ========== TERMINAL WEB ==========
+
+comando_queue = queue.Queue()
+
+@app.route('/raspberry/enviar', methods=['POST'])
+def recibir_comando():
+    comando = request.form.get('comando', '')
+    if comando:
+        for c in comando + '\n':  # Simula entrada estilo Serial
+            comando_queue.put(ord(c))
+        return f"Comando recibido: {comando}"
+    return "Sin comando"
+
+# Funciones para el intérprete
+
+def Serial_available():
+    return not comando_queue.empty()
+
+def Serial_read():
+    return comando_queue.get() if Serial_available() else 0
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
