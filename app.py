@@ -2,16 +2,28 @@ from flask import Flask, request, send_from_directory, render_template_string, j
 from flask_cors import CORS
 import os
 import queue
+import requests
 
 app = Flask(__name__)
 CORS(app)
-
-# ========== SUBIDA DE ARCHIVOS ==========
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+# Dirección IP de la Raspberry Pi (¡ajusta esto!)
+RASPBERRY_URL = "http://192.168.1.10:5001/comando"  # Cambia la IP por la de tu Raspberry
+
+# ========== Función para enviar a Raspberry ==========
+def enviar_a_raspberry(comando):
+    try:
+        res = requests.post(RASPBERRY_URL, json={"comando": comando}, timeout=1)
+        return res.status_code == 200
+    except requests.RequestException as e:
+        print(f"[❌ ERROR] No se pudo enviar a Raspberry: {e}")
+        return False
+
+# ========== Rutas de archivos y subida ==========
 @app.route("/")
 def index():
     return send_from_directory('.', 'index.html')
@@ -50,8 +62,7 @@ def list_files():
     links = [f"<li><a href='/uploads/{f}' target='_blank'>{f}</a></li>" for f in files]
     return f"<html><body><ul>{''.join(links)}</ul><a href='/'>Volver</a></body></html>"
 
-# ========== TERMINAL WEB ==========
-
+# ========== Terminal Web ==========
 comando_queue = queue.Queue()
 
 @app.route('/raspberry/enviar', methods=['POST'])
@@ -60,11 +71,15 @@ def recibir_comando():
     if comando:
         for c in comando + '\n':  # Simula entrada estilo Serial
             comando_queue.put(ord(c))
-        return f"Comando recibido: {comando}"
+
+        # También enviar a la Raspberry Pi
+        enviado = enviar_a_raspberry(comando)
+        estado = "🟢 Enviado a Raspberry" if enviado else "🔴 Error al enviar a Raspberry"
+
+        return f"Comando recibido: {comando} ({estado})"
     return "Sin comando"
 
-# Funciones para el intérprete
-
+# ========== Funciones estilo Serial para uso interno ==========
 def Serial_available():
     return not comando_queue.empty()
 
