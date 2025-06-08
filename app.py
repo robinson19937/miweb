@@ -13,7 +13,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Dirección pública o túnel hacia la Raspberry Pi
 # ✅ URL ACTUALIZADA
-RASPBERRY_URL = "https://thin-news-boil.loca.lt"
+RASPBERRY_URL = "https://tender-lions-stay.loca.lt"
 
 # ========== Función para enviar a Raspberry ==========
 def enviar_a_raspberry(comando):
