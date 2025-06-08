@@ -58,7 +58,7 @@
       document.getElementById('command').value = "";
 
       try {
-        const res = await fetch('http://192.168.1.10:5000/raspberry/enviar', {
+        const res = await fetch('http://192.168.1.10:5001/raspberry/enviar', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
@@ -76,4 +76,3 @@
   </script>
 </body>
 </html>
-
