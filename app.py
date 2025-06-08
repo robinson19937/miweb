@@ -11,13 +11,14 @@ UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Dirección IP de la Raspberry Pi (¡ajusta esto!)
-RASPBERRY_URL = "http://192.168.1.10:5001/comando"  # Cambia la IP por la de tu Raspberry
+# Dirección pública o túnel hacia la Raspberry Pi
+# ✅ URL ACTUALIZADA
+RASPBERRY_URL = "https://thin-news-boil.loca.lt"
 
 # ========== Función para enviar a Raspberry ==========
 def enviar_a_raspberry(comando):
     try:
-        res = requests.post(RASPBERRY_URL, json={"comando": comando}, timeout=1)
+        res = requests.post(RASPBERRY_URL, json={"comando": comando}, timeout=2)
         return res.status_code == 200
     except requests.RequestException as e:
         print(f"[❌ ERROR] No se pudo enviar a Raspberry: {e}")
