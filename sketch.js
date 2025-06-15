@@ -31,12 +31,7 @@ function draw() {
     text("No se pudo cargar la imagen de fondo.", width / 2, height / 2);
   }
 
-  // Mostrar el texto naranja
-  fill('orange');
-  textAlign(LEFT, TOP);
-  textSize(16);
-  text("robinsonlopez1199@gmail.com", 400, 100);
-  text("tel 3209974513", 400, 120);
+
 
   // Botón "Quiénes somos"
   fill(30, 144, 255, 230);
@@ -58,6 +53,14 @@ function draw() {
   rect(botonX, botonY + botonH * 2 + 40, botonW, botonH, 10);
   fill(255);
   text("Red neuronal", botonX + botonW / 2, botonY + botonH * 2 + 40 + botonH / 2);
+
+  fill('orange');
+  textAlign(LEFT, TOP);
+  textSize(16);
+  let textoY = botonY + botonH * 3 + 50;
+  text("robinsonlopez1199@gmail.com", 20, textoY);
+  text("tel 3209974513", 20, textoY + 20);
+  
 
   // Info desplegable
   if (mostrarInfo) {
