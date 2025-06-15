@@ -17,9 +17,10 @@ function setup() {
   pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   textFont('sans-serif');
-  textSize(22);
-  fill('yellow');
-  text('rainbows', 6, 20);
+  textSize(16);
+  fill('orange');
+  text("robinsonlopez1199@gmail.com", 400, 100);
+  text("tel 3209974513", 400, 120);
 }
 
 function draw() {
@@ -54,6 +55,8 @@ function draw() {
   rect(botonX, botonY + botonH * 2 + 40, botonW, botonH, 10);
   fill(255);
   text("Red neuronal", botonX + botonW / 2, botonY + botonH * 2 + 40 + botonH / 2);
+
+
 
   // Info desplegable
   if (mostrarInfo) {
