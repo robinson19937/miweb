@@ -17,6 +17,9 @@ function setup() {
   pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   textFont('sans-serif');
+  textSize(22);
+  fill('yellow');
+  text('rainbows', 6, 20);
 }
 
 function draw() {
