@@ -17,10 +17,6 @@ function setup() {
   pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   textFont('sans-serif');
-  textSize(16);
-  fill('orange');
-  text("robinsonlopez1199@gmail.com", 400, 100);
-  text("tel 3209974513", 400, 120);
 }
 
 function draw() {
@@ -34,6 +30,13 @@ function draw() {
     textSize(24);
     text("No se pudo cargar la imagen de fondo.", width / 2, height / 2);
   }
+
+  // Mostrar el texto naranja
+  fill('orange');
+  textAlign(LEFT, TOP);
+  textSize(16);
+  text("robinsonlopez1199@gmail.com", 400, 100);
+  text("tel 3209974513", 400, 120);
 
   // Botón "Quiénes somos"
   fill(30, 144, 255, 230);
@@ -51,12 +54,10 @@ function draw() {
   text("Proyectos", botonX + botonW / 2, botonY + botonH + 20 + botonH / 2);
 
   // Botón "Red neuronal"
-  fill(255, 140, 0, 230); // color naranja
+  fill(255, 140, 0, 230);
   rect(botonX, botonY + botonH * 2 + 40, botonW, botonH, 10);
   fill(255);
   text("Red neuronal", botonX + botonW / 2, botonY + botonH * 2 + 40 + botonH / 2);
-
-
 
   // Info desplegable
   if (mostrarInfo) {
@@ -74,19 +75,16 @@ function draw() {
 }
 
 function mousePressed() {
-  // Clic en "Quiénes somos"
   if (mouseX > botonX && mouseX < botonX + botonW &&
       mouseY > botonY && mouseY < botonY + botonH) {
     mostrarInfo = !mostrarInfo;
   }
 
-  // Clic en "Proyectos"
   if (mouseX > botonX && mouseX < botonX + botonW &&
       mouseY > botonY + botonH + 20 && mouseY < botonY + botonH * 2 + 20) {
     window.open("https://www.roblop.com/proyectos", "_blank");
   }
 
-  // Clic en "Red neuronal"
   if (mouseX > botonX && mouseX < botonX + botonW &&
       mouseY > botonY + botonH * 2 + 40 && mouseY < botonY + botonH * 3 + 40) {
     window.open("https://roblop.com/red-neuronal", "_blank");
