@@ -1,72 +1,42 @@
-from flask import Flask, request, jsonify, send_from_directory, abort
-from flask_cors import CORS
-from werkzeug.utils import secure_filename
+from flask import Flask, request, send_from_directory, render_template, abort
 import os
-import logging
 
 app = Flask(__name__)
 
-# Configuración de logging
-logging.basicConfig(level=logging.INFO)
-
-# Configuración de carpeta de subida
-UPLOAD_FOLDER = "/app/uploads"  # Render’s writable directory
+# Carpeta para guardar archivos subidos
+UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32 MB
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Habilitar CORS
-CORS(app)  # Allow all origins for debugging (replace with specific origins later)
-
+# Página principal
 @app.route("/")
 def index():
-    return "<p>Servidor de carga de documentos activo.</p>"
+    return render_template("index.html")
 
-@app.route("/upload", methods=["POST", "OPTIONS"])
+# Subida de archivos
+@app.route("/upload", methods=["POST"])
 def upload_file():
-    if request.method == "OPTIONS":
-        app.logger.info("Handling OPTIONS preflight request")
-        return "", 204
-    app.logger.info(f"Received upload request. Headers: {request.headers}")
-    if 'file' not in request.files:
-        app.logger.error("No file in request")
-        return jsonify({"success": False, "message": "No se encontró el archivo en la solicitud"}), 400
+    if 'file' not in request.files or request.files['file'].filename == '':
+        return "No se seleccionó ningún archivo.", 400
 
     file = request.files['file']
-    app.logger.info(f"File received: {file.filename}, Size: {file.content_length}")
-    if file.filename == '':
-        app.logger.error("No file selected")
-        return jsonify({"success": False, "message": "No se seleccionó ningún archivo"}), 400
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(filepath)
 
-    try:
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        app.logger.info(f"Saving file to: {filepath}")
-        file.save(filepath)
-        app.logger.info(f"File {filename} uploaded successfully")
-        return jsonify({"success": True, "message": "Archivo subido exitosamente", "filename": filename})
-    except Exception as e:
-        app.logger.error(f"Upload error: {str(e)}")
-        return jsonify({"success": False, "message": f"Error interno: {str(e)}"}), 500
+    return "Archivo subido exitosamente."
 
-@app.route("/uploads")
-def list_files():
-    try:
-        files = os.listdir(app.config['UPLOAD_FOLDER'])
-        file_urls = [f"/uploads/{filename}" for filename in files]
-        app.logger.info("Listed uploaded files")
-        return jsonify({"success": True, "files": file_urls})
-    except Exception as e:
-        app.logger.error(f"List files error: {str(e)}")
-        return jsonify({"success": False, "message": str(e)}), 500
-
+# Para servir archivos subidos si lo deseas (puedes quitar esto si no es necesario)
 @app.route("/uploads/<filename>")
 def uploaded_file(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     if not os.path.exists(filepath):
-        app.logger.error(f"File {filename} not found")
-        abort(404)
+        return abort(404)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
-if __name__ == '__main__':
+# (Opcional) servir JS desde /static/
+@app.route("/static/<path:path>")
+def send_static(path):
+    return send_from_directory("static", path)
+
+if __name__ == "__main__":
     app.run(debug=True)
