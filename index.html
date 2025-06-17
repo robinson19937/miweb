@@ -134,14 +134,18 @@
       const formData = new FormData();
       formData.append('file', fileInput.files[0]);
 
-      fetch('https://miweb-mj38.onrender.com/uploads', {
+      fetch('https://miweb-mj38.onrender.com/upload', {
         method: 'POST',
         body: formData
       })
-      .then(response => response.text())
+      .then(response => response.json())
       .then(data => {
-        alert("✅ Archivo subido exitosamente.");
-        location.reload(); // mejor práctica que modificar todo el body
+        if (data.success) {
+          alert("✅ Archivo subido exitosamente.");
+          location.reload();
+        } else {
+          alert(`Error: ${data.message}`);
+        }
       })
       .catch(error => {
         console.error('Error:', error);
