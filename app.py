@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 import os
 
@@ -26,7 +26,21 @@ def upload_file():
         file.save(save_path)
 
     if idea:
-        with open(os.path.join(UPLOAD_FOLDER, 'idea.txt'), 'a', encoding='utf-8') as f:
+        with open(os.path.join(UPLOAD_FOLDER, 'ideas.txt'), 'a', encoding='utf-8') as f:
             f.write(idea + '\n---\n')
 
     return "Archivo o idea recibida correctamente ✅"
+
+# ✅ NUEVO: listar archivos
+@app.route('/archivos', methods=['GET'])
+def listar_archivos():
+    archivos = []
+    for nombre in os.listdir(UPLOAD_FOLDER):
+        if os.path.isfile(os.path.join(UPLOAD_FOLDER, nombre)):
+            archivos.append(nombre)
+    return jsonify(archivos)
+
+# ✅ NUEVO: servir archivos por nombre
+@app.route('/uploads/<path:filename>')
+def descargar_archivo(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
