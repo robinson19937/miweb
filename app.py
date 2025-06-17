@@ -1,42 +1,24 @@
-from flask import Flask, request, send_from_directory, render_template, abort
+from flask import Flask, request
 import os
 
 app = Flask(__name__)
-
-# Carpeta para guardar archivos subidos
-UPLOAD_FOLDER = "uploads"
+UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Página principal
-@app.route("/")
-def index():
-    return render_template("index.html")
+@app.route('/upload', methods=['POST'])
+def upload():
+    archivo = request.files.get('file')
+    idea = request.form.get('idea', '')
 
-# Subida de archivos
-@app.route("/upload", methods=["POST"])
-def upload_file():
-    if 'file' not in request.files or request.files['file'].filename == '':
-        return "No se seleccionó ningún archivo.", 400
+    if archivo:
+        ruta = os.path.join(UPLOAD_FOLDER, archivo.filename)
+        archivo.save(ruta)
 
-    file = request.files['file']
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(filepath)
+    if idea:
+        with open(os.path.join(UPLOAD_FOLDER, 'ideas.txt'), 'a', encoding='utf-8') as f:
+            f.write(idea + '\n---\n')
 
-    return "Archivo subido exitosamente."
-
-# Para servir archivos subidos si lo deseas (puedes quitar esto si no es necesario)
-@app.route("/uploads/<filename>")
-def uploaded_file(filename):
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    if not os.path.exists(filepath):
-        return abort(404)
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-# (Opcional) servir JS desde /static/
-@app.route("/static/<path:path>")
-def send_static(path):
-    return send_from_directory("static", path)
-
-if __name__ == "__main__":
-    app.run(debug=True)
+    if archivo or idea:
+        return "Datos recibidos correctamente."
+    else:
+        return "No se recibió ni archivo ni idea.", 400
