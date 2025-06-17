@@ -23,7 +23,7 @@ function setup() {
     <label style="font-weight:bold; font-size:16px; color:#00f;">🚀 Cotiza tus trabajos aquí</label><br>
     <small style="font-size:14px;">Sube un documento o describe tu idea</small><br>
   `);
-  formulario.position(20, height - 290);  // Subido un poco más arriba
+  formulario.position(20, height - 370);  // Subido más arriba para no tapar enlaces
   formulario.style('background', 'rgba(0,0,0,0.7)');
   formulario.style('padding', '15px');
   formulario.style('border-radius', '12px');
