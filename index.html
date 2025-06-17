@@ -6,15 +6,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' https://miweb-mj38.onrender.com;">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.2/p5.min.js" defer></script>
-  <script src="sketch.js?v=<?php echo time(); ?>" defer></script>
-  <!-- Note: GitHub Pages doesn't support PHP. Consider replacing with: <script src="sketch.js?v=1" defer></script> -->
+  <script src="sketch.js?v=1" defer></script>
+  <!-- Increment v=1 to v=2, etc., when updating sketch.js to bust cache -->
 
   <style>
     body, html {
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow: auto; /* Changed from hidden to allow scrolling if needed */
       font-family: sans-serif;
+    }
+
+    /* Ensure p5.js canvas is visible */
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1; /* Below form and GitHub link */
     }
 
     #uploadForm {
