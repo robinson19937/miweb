@@ -1,24 +1,29 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 import os
 
 app = Flask(__name__)
+
+# Carpeta donde se guardarán los archivos
 UPLOAD_FOLDER = 'uploads'
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+@app.route('/')
+def home():
+    return '✅ Servidor en línea - Flask en Render'
+
 @app.route('/upload', methods=['POST'])
 def upload():
-    archivo = request.files.get('file')
+    file = request.files.get('file')
     idea = request.form.get('idea', '')
 
-    if archivo:
-        ruta = os.path.join(UPLOAD_FOLDER, archivo.filename)
-        archivo.save(ruta)
+    if not file:
+        return '❌ No se envió ningún archivo', 400
+
+    file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+    file.save(file_path)
 
     if idea:
-        with open(os.path.join(UPLOAD_FOLDER, 'ideas.txt'), 'a', encoding='utf-8') as f:
-            f.write(idea + '\n---\n')
+        with open(os.path.join(UPLOAD_FOLDER, 'ideas.txt'), 'a') as f:
+            f.write(f"📝 {idea}\nArchivo: {file.filename}\n---\n")
 
-    if archivo or idea:
-        return "Datos recibidos correctamente."
-    else:
-        return "No se recibió ni archivo ni idea.", 400
+    return '✅ Cotización recibida con éxito'
