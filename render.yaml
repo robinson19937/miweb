@@ -1,8 +1,16 @@
-    services:
+services:
   - type: web
     name: flask-backend
     env: python
     buildCommand: "pip install -r requirements.txt"
     startCommand: "gunicorn app:app --bind 0.0.0.0:$PORT"
     plan: free
+    envVars:
+      - key: FLASK_ENV
+        value: production
+    buildFilter:
+      paths:
+        - app.py
+        - requirements.txt
+        - render.yaml
 
