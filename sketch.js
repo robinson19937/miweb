@@ -17,6 +17,64 @@ function setup() {
   pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   textFont('sans-serif');
+    // Crear formulario de subida
+  let formulario = createDiv(`
+    <label style="font-weight:bold; font-size:16px; color:#00f;">🚀 Cotiza tus trabajos aquí</label><br>
+    <small style="font-size:14px;">Sube un documento o describe tu idea</small><br>
+  `);
+  formulario.position(20, height - 160); // Parte inferior izquierda
+  formulario.style('background', 'rgba(0,0,0,0.7)');
+  formulario.style('padding', '15px');
+  formulario.style('border-radius', '12px');
+  formulario.style('width', '260px');
+  formulario.style('color', 'white');
+  formulario.style('font-family', 'sans-serif');
+  formulario.style('z-index', '100');
+
+  let fileInput = createFileInput(handleFileUpload);
+  fileInput.parent(formulario);
+  fileInput.style('margin-top', '10px');
+  fileInput.style('width', '100%');
+  fileInput.style('background', '#222');
+  fileInput.style('color', 'white');
+  fileInput.style('padding', '5px');
+  fileInput.style('border', 'none');
+  fileInput.style('border-radius', '8px');
+
+  let subirBtn = createButton('Subir archivo');
+  subirBtn.parent(formulario);
+  subirBtn.style('margin-top', '10px');
+  subirBtn.style('padding', '10px');
+  subirBtn.style('width', '100%');
+  subirBtn.style('background', '#00c853');
+  subirBtn.style('color', 'white');
+  subirBtn.style('border', 'none');
+  subirBtn.style('border-radius', '8px');
+  subirBtn.style('font-weight', 'bold');
+
+  subirBtn.mousePressed(() => {
+    if (!fileInput.elt.files.length) {
+      alert("Por favor selecciona un archivo.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', fileInput.elt.files[0]);
+
+    fetch('https://miweb-mj38.onrender.com/upload', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => {
+      alert("✅ Archivo subido exitosamente.");
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      alert("❌ Error al subir el archivo.");
+    });
+  });
+
 }
 
 function draw() {
