@@ -17,12 +17,13 @@ function setup() {
   pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   textFont('sans-serif');
-    // Crear contenedor del formulario
+
+  // Crear contenedor del formulario
   let formulario = createDiv(`
     <label style="font-weight:bold; font-size:16px; color:#00f;">🚀 Cotiza tus trabajos aquí</label><br>
     <small style="font-size:14px;">Sube un documento o describe tu idea</small><br>
   `);
-  formulario.position(20, height - 220); // Parte inferior izquierda
+  formulario.position(20, height - 300); // 🔼 Más arriba para no tapar texto
   formulario.style('background', 'rgba(0,0,0,0.7)');
   formulario.style('padding', '15px');
   formulario.style('border-radius', '12px');
@@ -95,9 +96,8 @@ function setup() {
       alert("❌ Error al enviar la cotización.");
     });
   });
-
-
 }
+
 
 function draw() {
   background(0);
