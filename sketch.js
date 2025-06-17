@@ -23,7 +23,7 @@ function setup() {
     <label style="font-weight:bold; font-size:16px; color:#00f;">🚀 Cotiza tus trabajos aquí</label><br>
     <small style="font-size:14px;">Sube un documento o describe tu idea</small><br>
   `);
-  formulario.position(20, height - 300); // 🔼 Más arriba para no tapar texto
+  formulario.position(20, height - 290);  // Subido un poco más arriba
   formulario.style('background', 'rgba(0,0,0,0.7)');
   formulario.style('padding', '15px');
   formulario.style('border-radius', '12px');
@@ -81,7 +81,7 @@ function setup() {
     if (archivo) formData.append('file', archivo);
     if (ideaTexto) formData.append('idea', ideaTexto);
 
-    fetch('https://miweb-mj38.onrender.com/upload', {
+    fetch('https://miweb-pkmg.onrender.com/upload', {
       method: 'POST',
       body: formData
     })
@@ -98,7 +98,6 @@ function setup() {
   });
 }
 
-
 function draw() {
   background(0);
 
@@ -111,9 +110,6 @@ function draw() {
     text("No se pudo cargar la imagen de fondo.", width / 2, height / 2);
   }
 
-
-
-  // Botón "Quiénes somos"
   fill(30, 144, 255, 230);
   noStroke();
   rect(botonX, botonY, botonW, botonH, 10);
@@ -122,13 +118,11 @@ function draw() {
   textSize(20);
   text("Quiénes somos", botonX + botonW / 2, botonY + botonH / 2);
 
-  // Botón "Proyectos"
   fill(50, 205, 50, 230);
   rect(botonX, botonY + botonH + 20, botonW, botonH, 10);
   fill(255);
   text("Proyectos", botonX + botonW / 2, botonY + botonH + 20 + botonH / 2);
 
-  // Botón "Red neuronal"
   fill(255, 140, 0, 230);
   rect(botonX, botonY + botonH * 2 + 40, botonW, botonH, 10);
   fill(255);
@@ -140,9 +134,7 @@ function draw() {
   let textoY = botonY + botonH * 3 + 50;
   text("robinsonlopez1199@gmail.com", 20, textoY);
   text("tel 3209974513", 20, textoY + 20);
-  
 
-  // Info desplegable
   if (mostrarInfo) {
     fill(255, 245);
     stroke(0);
