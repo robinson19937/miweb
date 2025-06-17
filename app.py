@@ -10,20 +10,23 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 # Configuración de carpeta de subida
-UPLOAD_FOLDER = "/app/uploads"  # Use Render-writable directory
+UPLOAD_FOLDER = "/app/uploads"  # Render’s writable directory
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # Increase to 32 MB
+app.config['MAX_CONTENT_LENGTH'] = 32 * 1024 * 1024  # 32 MB
 
 # Habilitar CORS
-CORS(app)  # Temporarily allow all origins for debugging
+CORS(app)  # Allow all origins for debugging (replace with specific origins later)
 
 @app.route("/")
 def index():
     return "<p>Servidor de carga de documentos activo.</p>"
 
-@app.route("/upload", methods=["POST"])
+@app.route("/upload", methods=["POST", "OPTIONS"])
 def upload_file():
+    if request.method == "OPTIONS":
+        app.logger.info("Handling OPTIONS preflight request")
+        return "", 204
     app.logger.info(f"Received upload request. Headers: {request.headers}")
     if 'file' not in request.files:
         app.logger.error("No file in request")
