@@ -17,21 +17,22 @@ function setup() {
   pixelDensity(1);
   createCanvas(windowWidth, windowHeight);
   textFont('sans-serif');
-    // Crear formulario de subida
+    // Crear contenedor del formulario
   let formulario = createDiv(`
     <label style="font-weight:bold; font-size:16px; color:#00f;">🚀 Cotiza tus trabajos aquí</label><br>
     <small style="font-size:14px;">Sube un documento o describe tu idea</small><br>
   `);
-  formulario.position(20, height - 160); // Parte inferior izquierda
+  formulario.position(20, height - 220); // Parte inferior izquierda
   formulario.style('background', 'rgba(0,0,0,0.7)');
   formulario.style('padding', '15px');
   formulario.style('border-radius', '12px');
-  formulario.style('width', '260px');
+  formulario.style('width', '270px');
   formulario.style('color', 'white');
   formulario.style('font-family', 'sans-serif');
   formulario.style('z-index', '100');
 
-  let fileInput = createFileInput(handleFileUpload);
+  // Input para archivo
+  let fileInput = createFileInput(null);
   fileInput.parent(formulario);
   fileInput.style('margin-top', '10px');
   fileInput.style('width', '100%');
@@ -41,7 +42,21 @@ function setup() {
   fileInput.style('border', 'none');
   fileInput.style('border-radius', '8px');
 
-  let subirBtn = createButton('Subir archivo');
+  // Textarea para idea
+  let ideaInput = createElement('textarea', '');
+  ideaInput.attribute('placeholder', 'Describe tu idea aquí...');
+  ideaInput.parent(formulario);
+  ideaInput.style('margin-top', '10px');
+  ideaInput.style('width', '100%');
+  ideaInput.style('height', '60px');
+  ideaInput.style('padding', '8px');
+  ideaInput.style('border-radius', '8px');
+  ideaInput.style('border', 'none');
+  ideaInput.style('resize', 'none');
+  ideaInput.style('font-family', 'sans-serif');
+
+  // Botón para subir
+  let subirBtn = createButton('Enviar cotización');
   subirBtn.parent(formulario);
   subirBtn.style('margin-top', '10px');
   subirBtn.style('padding', '10px');
@@ -53,27 +68,34 @@ function setup() {
   subirBtn.style('font-weight', 'bold');
 
   subirBtn.mousePressed(() => {
-    if (!fileInput.elt.files.length) {
-      alert("Por favor selecciona un archivo.");
+    const ideaTexto = ideaInput.value().trim();
+    const archivo = fileInput.elt.files[0];
+
+    if (!archivo && !ideaTexto) {
+      alert("Por favor sube un archivo o escribe tu idea.");
       return;
     }
 
     const formData = new FormData();
-    formData.append('file', fileInput.elt.files[0]);
+    if (archivo) formData.append('file', archivo);
+    if (ideaTexto) formData.append('idea', ideaTexto);
 
     fetch('https://miweb-mj38.onrender.com/upload', {
       method: 'POST',
       body: formData
     })
-    .then(response => response.text())
+    .then(res => res.text())
     .then(data => {
-      alert("✅ Archivo subido exitosamente.");
+      alert("✅ Cotización enviada exitosamente.");
+      fileInput.elt.value = "";
+      ideaInput.value('');
     })
-    .catch(error => {
-      console.error('Error:', error);
-      alert("❌ Error al subir el archivo.");
+    .catch(err => {
+      console.error('Error:', err);
+      alert("❌ Error al enviar la cotización.");
     });
   });
+
 
 }
 
