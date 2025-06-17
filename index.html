@@ -133,13 +133,18 @@
 
       const formData = new FormData();
       formData.append('file', fileInput.files[0]);
+      console.log('FormData:', [...formData.entries()]); // Debug: Log form data
 
       fetch('https://miweb-mj38.onrender.com/upload', {
         method: 'POST',
         body: formData
       })
-      .then(response => response.json())
+      .then(response => {
+        console.log('Response Status:', response.status); // Debug: Log status
+        return response.json();
+      })
       .then(data => {
+        console.log('Response Data:', data); // Debug: Log response
         if (data.success) {
           alert("✅ Archivo subido exitosamente.");
           location.reload();
@@ -149,7 +154,7 @@
       })
       .catch(error => {
         console.error('Error:', error);
-        alert("Hubo un error al subir el archivo.");
+        alert("Hubo un error al subir el archivo: " + error.message);
       });
     });
   </script>
