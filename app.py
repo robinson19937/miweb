@@ -41,7 +41,6 @@ def upload_file():
         # Subir a Cloudinary
         result = cloudinary.uploader.upload(save_path)
         archivo_url = result.get("secure_url", "")
-        archivo_nombre = os.path.splitext(filename)[0]
         registro += f"Archivo subido: {filename}\nURL: {archivo_url}\n"
 
     # Subir idea como archivo a Cloudinary si no hay archivo
@@ -84,3 +83,28 @@ def listar_ideas():
 @app.route('/uploads/<path:filename>')
 def descargar_archivo(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
+
+# ✅ NUEVO: Editar el archivo ideas.txt desde el navegador
+@app.route('/editar_ideas', methods=['GET', 'POST'])
+def editar_ideas():
+    path = os.path.join(UPLOAD_FOLDER, 'ideas.txt')
+
+    if request.method == 'POST':
+        nuevo_contenido = request.form.get('contenido', '')
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(nuevo_contenido)
+        return "✅ ideas.txt actualizado correctamente"
+
+    if not os.path.exists(path):
+        return "<p>No hay ideas.txt aún.</p>"
+
+    with open(path, 'r', encoding='utf-8') as f:
+        contenido = f.read()
+
+    return f'''
+    <h2>Editar ideas.txt</h2>
+    <form method="POST">
+        <textarea name="contenido" style="width:100%; height:400px;">{contenido}</textarea><br>
+        <button type="submit">Guardar cambios</button>
+    </form>
+    '''
