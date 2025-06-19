@@ -1,73 +1,86 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
+import os
 import cloudinary
 import cloudinary.uploader
-import os
+from datetime import datetime
 
 app = Flask(__name__)
 CORS(app)
 
-# Configura Cloudinary
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+# Configurar Cloudinary
 cloudinary.config(
     cloud_name='dwhoutqan',
     api_key='993886694566122',
     api_secret='a6CEBBn195-2dDDsqrjufTkrInA'
 )
 
-IDEAS_FILE = 'ideas.txt'
-
 @app.route('/')
 def index():
-    return 'Servidor Flask con Cloudinary activo ☁️📁'
+    return 'Servidor Flask activo para subir archivos 📁'
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    idea = request.form.get('idea', '')
+    idea = request.form.get('idea', '').strip()
     file = request.files.get('file')
 
-    result = {}
-    archivo_url = None
-    archivo_nombre = None
-
     if not file and not idea:
-        return "Error: no se envió ni archivo ni idea", 400
+        return jsonify({"error": "Error: no se envió ni archivo ni idea"}), 400
 
-    # Subida del archivo a Cloudinary
+    registro = ""
+
+    # Subir archivo si existe
     if file:
-        try:
-            upload_result = cloudinary.uploader.upload(file)
-            archivo_url = upload_result['secure_url']
-            archivo_nombre = upload_result['original_filename']
-            result['archivo_url'] = archivo_url
-            result['archivo_nombre'] = archivo_nombre
-        except Exception as e:
-            return f"❌ Error al subir a Cloudinary: {str(e)}", 500
+        filename = file.filename
+        save_path = os.path.join(UPLOAD_FOLDER, filename)
+        file.save(save_path)
 
-    # Construir entrada para almacenar
-    entrada = ""
-    if idea:
-        entrada += f"Idea:\n{idea.strip()}\n"
-    if archivo_url:
-        entrada += f"Archivo subido: {archivo_nombre}\nURL: {archivo_url}\n"
-    entrada += "---\n"
+        # Subir a Cloudinary
+        result = cloudinary.uploader.upload(save_path)
+        archivo_url = result.get("secure_url", "")
+        archivo_nombre = os.path.splitext(filename)[0]
+        registro += f"Archivo subido: {filename}\nURL: {archivo_url}\n"
 
-    # Guardar entrada en archivo de texto
-    if entrada:
-        with open(IDEAS_FILE, 'a', encoding='utf-8') as f:
-            f.write(entrada)
+    # Subir idea como archivo a Cloudinary si no hay archivo
+    if idea and not file:
+        now = datetime.now().strftime("%Y%m%d_%H%M%S")
+        idea_filename = f"idea_{now}.txt"
+        idea_path = os.path.join(UPLOAD_FOLDER, idea_filename)
+        with open(idea_path, 'w', encoding='utf-8') as f:
+            f.write(idea)
 
-    result['idea'] = idea
+        # Subir idea.txt a Cloudinary
+        result = cloudinary.uploader.upload(idea_path, resource_type="raw")
+        idea_url = result.get("secure_url", "")
+        registro += f"Idea:\n{idea}\nURL: {idea_url}\n"
+
+    elif idea:
+        registro += f"Idea:\n{idea}\n"
+
+    # Guardar todo en ideas.txt (local)
+    with open(os.path.join(UPLOAD_FOLDER, 'ideas.txt'), 'a', encoding='utf-8') as f:
+        f.write(registro + "---\n")
 
     return jsonify({
         "message": "✅ Cotización recibida correctamente",
-        "data": result
+        "registro": registro
     })
 
-@app.route('/ideas', methods=['GET'])
+@app.route('/ideas')
 def listar_ideas():
-    if not os.path.exists(IDEAS_FILE):
+    path = os.path.join(UPLOAD_FOLDER, 'ideas.txt')
+    if not os.path.exists(path):
         return jsonify([])
-    with open(IDEAS_FILE, 'r', encoding='utf-8') as f:
+
+    with open(path, 'r', encoding='utf-8') as f:
         contenido = f.read()
-        ideas = [bloque.strip() for bloque in contenido.split('---') if bloque.strip()]
-        return jsonify(ideas)
+
+    bloques = contenido.strip().split('---\n')
+    return jsonify([bloque.strip() for bloque in bloques if bloque.strip()])
+
+@app.route('/uploads/<path:filename>')
+def descargar_archivo(filename):
+    return send_from_directory(UPLOAD_FOLDER, filename)
