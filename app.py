@@ -84,7 +84,6 @@ def listar_ideas():
 def descargar_archivo(filename):
     return send_from_directory(UPLOAD_FOLDER, filename)
 
-# ✅ NUEVO: Editar el archivo ideas.txt desde el navegador
 @app.route('/editar_ideas', methods=['GET', 'POST'])
 def editar_ideas():
     path = os.path.join(UPLOAD_FOLDER, 'ideas.txt')
@@ -108,3 +107,8 @@ def editar_ideas():
         <button type="submit">Guardar cambios</button>
     </form>
     '''
+
+# ✅ Esta parte asegura que Render mantenga la app corriendo
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
