@@ -45,7 +45,7 @@ function setup() {
 
   // Textarea para idea
   let ideaInput = createElement('textarea', '');
-  ideaInput.attribute('placeholder', 'Describe tu idea aquí, pulsa enviar cotizacion, espera unos segundos....');
+  ideaInput.attribute('placeholder', 'Describe tu idea aquí, pulsa enviar cotizacion, espera unos segundos...');
   ideaInput.parent(formulario);
   ideaInput.style('margin-top', '10px');
   ideaInput.style('width', '100%');
